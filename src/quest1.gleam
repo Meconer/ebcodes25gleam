@@ -114,46 +114,31 @@ pub fn q1p2() {
 
 /// Swaps the elements at index 'i' and index 'j' in a list.
 /// Returns Ok(new_list) on success, or Error("Error message") if indices are invalid.
-pub fn swap_elements(
+pub fn switch_first_and_idx(
   input_list: List(String),
-  i: Int,
-  j: Int,
+  idx: Int,
 ) -> Result(List(String), String) {
   // 1. Get the current length
   let len = list.length(input_list)
 
   // 2. Simple validation for out-of-bounds indices
-  let valid_i = i >= 0 && i < len
-  let valid_j = j >= 0 && j < len
+  let valid_i = idx >= 0 && idx < len
 
   // Handle case where indices are invalid
-  case valid_i && valid_j {
-    False -> Error("One or both indices are out of bounds.")
+  case valid_i {
+    False -> Error("Index out of bounds.")
     True -> {
       // 3. Extract the elements and the parts of the list
       // Note: We use the helper function list.drop and list.first to get the element at a position
-      let element_i =
-        list.drop(input_list, i) |> list.first |> result.unwrap("Nil")
-      let element_j =
-        list.drop(input_list, j) |> list.first |> result.unwrap("Nil")
-
-      // Get the correct order for iteration (min_idx < max_idx)
-      let min_idx = int.min(i, j)
-      let max_idx = int.max(i, j)
-      let element_min = case i < j {
-        True -> element_i
-        False -> element_j
-      }
-      let element_max = case i < j {
-        True -> element_j
-        False -> element_i
-      }
+      let first_element = list.first(input_list) |> result.unwrap("Empty list")
+      let rest_of_list = list.drop(input_list, 1)
+      let element_at_idx =
+        list.drop(input_list, idx)
+        |> list.first
+        |> result.unwrap("Index too big.")
 
       // 4. Split and Reassemble the List
-      let #(first_part, rest_1) = list.split(input_list, min_idx)
-      let #(middle_part, rest_2) =
-        list.split(list.drop(rest_1, 1), max_idx - min_idx - 1)
-      let rest_3 = list.drop(rest_2, 1)
+      let #(first_part, rest) = list.split(input_list, idx)
 
       // Reassemble with swapped elements
       let new_list = list.append(first_part, [element_max])
