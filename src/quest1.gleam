@@ -112,12 +112,8 @@ pub fn q1p2() {
   name
 }
 
-/// Swaps the elements at index 'i' and index 'j' in a list.
-/// Returns Ok(new_list) on success, or Error("Error message") if indices are invalid.
-pub fn switch_first_and_idx(
-  input_list: List(String),
-  idx: Int,
-) -> Result(List(String), String) {
+/// Swaps the elements at index 'i' with the first element in a list.
+pub fn switch_first_and_idx(input_list: List(String), idx: Int) {
   // 1. Get the current length
   let len = list.length(input_list)
 
@@ -126,7 +122,7 @@ pub fn switch_first_and_idx(
 
   // Handle case where indices are invalid
   case valid_i {
-    False -> Error("Index out of bounds.")
+    False -> []
     True -> {
       // 3. Extract the elements and the parts of the list
       // Note: We use the helper function list.drop and list.first to get the element at a position
@@ -138,15 +134,15 @@ pub fn switch_first_and_idx(
         |> result.unwrap("Index too big.")
 
       // 4. Split and Reassemble the List
-      let #(first_part, rest) = list.split(input_list, idx)
+      let #(first_part, rest) = list.split(rest_of_list, idx - 1)
+      let rest = list.drop(rest, 1)
 
       // Reassemble with swapped elements
-      let new_list = list.append(first_part, [element_max])
-      let new_list = list.append(new_list, middle_part)
-      let new_list = list.append(new_list, [element_min])
-      let new_list = list.append(new_list, rest_3)
+      let new_list = [element_at_idx, ..first_part]
+      let new_list = list.append(new_list, [first_element])
+      let new_list = list.append(new_list, rest)
 
-      Ok(new_list)
+      new_list
     }
   }
 }
