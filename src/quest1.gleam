@@ -29,6 +29,12 @@ fn decode_instr(instr: String) -> Instruction {
   }
 }
 
+fn input_sample() {
+  "Vyrdax,Drakzyph,Fyrryn,Elarzris
+
+R3,L2,R3,L3"
+}
+
 fn input_p1() {
   "Vyrdax,Drakzyph,Fyrryn,Elarzris
 
@@ -39,6 +45,12 @@ fn input_p2() {
   "Vanidris,Mornnyn,Gorathulrix,Hyravash,Ulkzyph,Sarzeth,Thazketh,Voraxxaril,Zaloryx,Ozankynar,Qalfarin,Iskarnylor,Phyrloris,Oryhynd,Paldselor,Vyrldaros,Vaelzal,Tazmal,Rythzyph,Tirphor
 
 L18,R11,L17,R14,L16,R10,L19,R8,L17,R7,L5,R13,L5,R12,L5,R10,L5,R5,L5,R16,L17,R11,L12,R18,L19,R10,L8,R9,L12"
+}
+
+fn input_p3() {
+  "Lirgonn,Lazirzorin,Yndxelor,Mavzral,Glaurxel,Nythgarath,Irynlon,Orydaros,Kynralis,Mavquor,Talkryth,Malithlith,Mornkael,Helfal,Jaertal,Rahrilor,Aelithox,Daltaril,Orahorath,Draithrax,Urorath,Thazisis,Phyragrath,Harnnarel,Drethgryph,Galfeth,Selsyron,Krynnrex,Braemal,Aerrovan
+
+L9,R36,L48,R46,L31,R40,L7,R35,L48,R40,L26,R12,L36,R9,L33,R33,L44,R14,L37,R38,L5,R28,L5,R32,L5,R29,L5,R9,L5,R20,L5,R33,L5,R41,L5,R31,L5,R26,L5,R35,L33,R24,L9,R20,L20,R30,L23,R33,L8,R12,L14,R7,L45,R44,L20,R26,L11,R27,L9"
 }
 
 fn parse_input(input: String) -> #(List(String), List(Instruction)) {
@@ -147,21 +159,38 @@ pub fn switch_first_and_idx(input_list: List(String), idx: Int) {
   }
 }
 
-pub fn q1p3() {
-  let #(names, instrs) = parse_input(input_p2())
-  let len = list.length(names)
-  let res_idx =
-    list.fold(instrs, 0, fn(acc, instr) {
+fn do_instructions_p3(
+  names: List(String),
+  instrs: List(Instruction),
+) -> List(String) {
+  case instrs {
+    [instr, ..rest] -> {
+      echo instr
       let Instruction(dir, steps) = instr
-      let new_idx =
-        case dir {
-          Left -> { acc - steps + len } % len
-          Right -> { acc + steps } % len
+      let len = list.length(names)
+      echo len
+      let idx = case dir {
+        Left -> {
+          { 0 - steps + len }
         }
-        |> clamp(list.length(names) - 1)
-      new_idx
-    })
-  io.println("Final index: " <> int.to_string(res_idx))
-  let name = get_at(names, res_idx)
+        Right -> {
+          { 0 + steps }
+        }
+      }
+      echo idx
+      let new_names = switch_first_and_idx(names, idx)
+      echo new_names
+      do_instructions_p3(new_names, rest)
+    }
+    [] -> {
+      names
+    }
+  }
+}
+
+pub fn q1p3() {
+  let #(names, instrs) = parse_input(input_p3())
+  let res_list = do_instructions_p3(names, instrs)
+  let name = list.first(res_list) |> result.unwrap("Something is wrong")
   name
 }
