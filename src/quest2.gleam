@@ -39,19 +39,23 @@ fn cycle_p2(r: #(Int, Int), a: #(Int, Int)) -> #(Int, Int) {
   addition(r, a)
 }
 
-fn rec_cycle_p2(r: #(Int, Int), a: #(Int, Int), count: Int) -> Bool {
+fn rec_cycle_p2(
+  r: #(Int, Int),
+  a: #(Int, Int),
+  count: Int,
+) -> #(Bool, #(Int, Int), Int) {
   case count {
-    0 -> True
+    0 -> #(False, r, count)
     count -> {
       let new_r = cycle_p2(r, a)
       let limit = 100_000
       case new_r {
         #(x, y) -> {
           case x > limit || x < -limit {
-            True -> False
+            True -> #(False, new_r, count)
             False ->
               case y > limit || y < -limit {
-                True -> False
+                True -> #(False, new_r, count)
                 False -> rec_cycle_p2(new_r, a, count - 1)
               }
           }
@@ -61,7 +65,7 @@ fn rec_cycle_p2(r: #(Int, Int), a: #(Int, Int), count: Int) -> Bool {
   }
 }
 
-fn calc_cycles_p2(a: #(Int, Int), times: Int) -> Bool {
+fn calc_cycles_p2(a: #(Int, Int), times: Int) -> #(Bool, #(Int, Int), Int) {
   let r = #(0, 0)
   rec_cycle_p2(r, a, times)
 }
@@ -71,5 +75,5 @@ pub fn q2p2() {
   echo a
   let opposite_corner = addition(a, #(1000, 1000))
 
-  opposite_corner
+  calc_cycles_p2(opposite_corner, 100)
 }
