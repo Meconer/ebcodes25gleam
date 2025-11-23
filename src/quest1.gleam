@@ -29,11 +29,11 @@ fn decode_instr(instr: String) -> Instruction {
   }
 }
 
-fn input_sample() {
-  "Vyrdax,Drakzyph,Fyrryn,Elarzris
+// fn input_sample() {
+//   "Vyrdax,Drakzyph,Fyrryn,Elarzris
 
-R3,L2,R3,L3"
-}
+// R3,L2,R3,L3"
+// }
 
 fn input_p1() {
   "Vyrdax,Drakzyph,Fyrryn,Elarzris

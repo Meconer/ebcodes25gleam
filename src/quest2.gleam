@@ -31,8 +31,8 @@ pub fn q2p1() {
 }
 
 fn input_p2() {
-  // #(-79_785, -16_616)
-  #(35_300, -64_910)
+  #(-79_785, -16_616)
+  // #(35_300, -64_910)
 }
 
 fn cycle_p2(r: #(Int, Int), coord: #(Int, Int)) -> #(Int, Int) {
@@ -55,10 +55,10 @@ fn rec_cycle_p2(
       case new_r {
         #(x, y) -> {
           case x > limit || x < -limit {
-            True -> #(new_r, count - 1)
+            True -> #(new_r, -1)
             False ->
               case y > limit || y < -limit {
-                True -> #(new_r, count - 1)
+                True -> #(new_r, -1)
                 False -> rec_cycle_p2(new_r, coord, count - 1)
               }
           }
@@ -86,4 +86,32 @@ pub fn q2p2() {
   let diff = 1000 / 100
   let cols = make_range(xtop, xtop + 1000, diff, [])
   let rows = make_range(yleft, yleft + 1000, diff, [])
+  list.fold(rows, 0, fn(acc, row) {
+    list.fold(cols, acc, fn(acc, col) {
+      let coord = #(col, row)
+      let #(_final_r, cycles) = calc_cycles_p2(coord, 100)
+      case cycles {
+        0 -> acc + 1
+        _ -> acc
+      }
+    })
+  })
+}
+
+pub fn q2p3() {
+  let a = input_p2()
+  let #(xtop, yleft) = a
+  let diff = 1
+  let cols = make_range(xtop, xtop + 1000, diff, [])
+  let rows = make_range(yleft, yleft + 1000, diff, [])
+  list.fold(rows, 0, fn(acc, row) {
+    list.fold(cols, acc, fn(acc, col) {
+      let coord = #(col, row)
+      let #(_final_r, cycles) = calc_cycles_p2(coord, 100)
+      case cycles {
+        0 -> acc + 1
+        _ -> acc
+      }
+    })
+  })
 }

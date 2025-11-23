@@ -1,5 +1,6 @@
 import gleam/io
-import quest1
+
+// import quest1
 import quest2
 
 pub fn main() -> Nil {
@@ -7,6 +8,8 @@ pub fn main() -> Nil {
   echo quest2.q2p1()
   io.println("Q2p2:")
   echo quest2.q2p2()
+  io.println("Q2p3:")
+  echo quest2.q2p3()
 
   Nil
 }
