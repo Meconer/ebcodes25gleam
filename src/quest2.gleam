@@ -1,4 +1,5 @@
 import gleam/list
+import simplifile
 
 fn addition(a: #(Int, Int), b: #(Int, Int)) -> #(Int, Int) {
   let #(x1, y1) = a
@@ -81,6 +82,7 @@ pub fn make_range(start, stop, step, list) {
 }
 
 pub fn q2p2() {
+  let output = ["P3", "101 101", "255"]
   let a = input_p2()
   let #(xtop, yleft) = a
   let diff = 1000 / 100
