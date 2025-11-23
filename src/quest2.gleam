@@ -85,5 +85,5 @@ pub fn q2p2() {
   let #(xtop, yleft) = a
   let diff = 1000 / 100
   let cols = make_range(xtop, xtop + 1000, diff, [])
-  list.length(cols)
+  let rows = make_range(yleft, yleft + 1000, diff, [])
 }
