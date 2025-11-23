@@ -1,3 +1,5 @@
+import gleam/list
+
 fn addition(a: #(Int, Int), b: #(Int, Int)) -> #(Int, Int) {
   let #(x1, y1) = a
   let #(x2, y2) = b
@@ -71,11 +73,17 @@ pub fn calc_cycles_p2(coord: #(Int, Int), times: Int) -> #(#(Int, Int), Int) {
   rec_cycle_p2(r, coord, times)
 }
 
+pub fn make_range(start, stop, step, list) {
+  case start > stop {
+    True -> list.reverse(list)
+    False -> make_range(start + step, stop, step, [start, ..list])
+  }
+}
+
 pub fn q2p2() {
   let a = input_p2()
-  echo a
-  let opposite_corner = addition(a, #(1000, 1000))
-  let coord = #(35_630, -64_880)
-  let res = calc_cycles_p2(coord, 100)
-  assert res == #(#(-2520, -5355), 100)
+  let #(xtop, yleft) = a
+  let diff = 1000 / 100
+  let cols = make_range(xtop, xtop + 1000, diff, [])
+  list.length(cols)
 }
