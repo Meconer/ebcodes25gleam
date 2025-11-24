@@ -82,7 +82,6 @@ pub fn make_range(start, stop, step, list) {
 }
 
 pub fn q2p2() {
-  let output = ["P3", "101 101", "255"]
   let a = input_p2()
   let #(xtop, yleft) = a
   let diff = 1000 / 100
@@ -93,26 +92,37 @@ pub fn q2p2() {
       let coord = #(col, row)
       let #(_final_r, cycles) = calc_cycles_p2(coord, 100)
       case cycles {
-        0 -> acc + 1
-        _ -> acc
+        0 -> {
+          acc + 1
+        }
+        _ -> {
+          acc
+        }
       }
     })
   })
 }
 
 pub fn q2p3() {
+  let output = ["P3", "1001 1001", "255"] |> list.reverse()
   let a = input_p2()
   let #(xtop, yleft) = a
   let diff = 1
   let cols = make_range(xtop, xtop + 1000, diff, [])
   let rows = make_range(yleft, yleft + 1000, diff, [])
-  list.fold(rows, 0, fn(acc, row) {
+  list.fold(rows, #(0, output), fn(acc, row) {
     list.fold(cols, acc, fn(acc, col) {
       let coord = #(col, row)
       let #(_final_r, cycles) = calc_cycles_p2(coord, 100)
       case cycles {
-        0 -> acc + 1
-        _ -> acc
+        0 -> {
+          let #(cnt, output) = acc
+          #(cnt + 1, ["255 255 255", ..output])
+        }
+        _ -> {
+          let #(cnt, output) = acc
+          #(cnt, ["0 0 0", ..output])
+        }
       }
     })
   })
