@@ -35,7 +35,19 @@ pub fn q3() -> Nil {
   Nil
 }
 
+import quest4
+
+pub fn q4() -> Nil {
+  io.println("Q4p1:")
+  echo quest4.q4p1(quest4.input_p1)
+  // io.println("Q4p2:")
+  // echo quest4.q4p2(quest4.input_p2)
+  // io.println("Q4p3:")
+  // echo quest4.q4p3(quest4.input_p3)
+  Nil
+}
+
 pub fn main() -> Nil {
-  q3()
+  q4()
   Nil
 }
