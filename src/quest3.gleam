@@ -65,6 +65,7 @@ pub fn q3p3(input) {
     }
   })
   |> list.sort(int.compare)
-  |> echo
-  |> list.length
+  |> list.chunk(fn(n) { n })
+  |> list.map(fn(chunk) { list.length(chunk) })
+  |> list.fold(0, int.max)
 }

@@ -30,6 +30,8 @@ pub fn q3() -> Nil {
   echo quest3.q3p1(quest3.input_p1)
   io.println("Q3p2:")
   echo quest3.q3p2(quest3.input_p2)
+  io.println("Q3p3:")
+  echo quest3.q3p3(quest3.input_p3)
   Nil
 }
 
