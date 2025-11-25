@@ -27,9 +27,9 @@ import quest3
 
 pub fn q3() -> Nil {
   io.println("Q3p1:")
-  echo quest3.q3p1()
+  echo quest3.q3p1(quest3.input_p1)
   io.println("Q3p2:")
-  // echo quest3.q3p2()
+  echo quest3.q3p2(quest3.input_p2)
   Nil
 }
 
