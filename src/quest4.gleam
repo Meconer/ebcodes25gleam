@@ -46,17 +46,41 @@ pub fn q4p2(input, wanted_turns: Int) {
   }
 }
 
-pub fn q3p3(input) {
+fn get_input_p3(input) {
   input()
-  |> string.split(on: ",")
+  |> string.split(on: "\n")
   |> list.map(fn(s) {
-    case int.parse(s) {
-      Ok(i) -> i
-      Error(_) -> panic as "Wrong input"
+    case string.split(s, on: "|") {
+      [num_str] -> {
+        case int.parse(num_str) {
+          Ok(i) -> #(i, i)
+          Error(_) -> panic as "Wrong input"
+        }
+      }
+      [num_str1, num_str2] -> {
+        let n1 = case int.parse(num_str1) {
+          Ok(i) -> i
+          Error(_) -> panic as "Wrong input"
+        }
+        let n2 = case int.parse(num_str2) {
+          Ok(i) -> i
+          Error(_) -> panic as "Wrong input"
+        }
+        #(n1, n2)
+      }
+      _ -> panic as "Wrong input format"
     }
   })
-  |> list.sort(int.compare)
-  |> list.chunk(fn(n) { n })
-  |> list.map(fn(chunk) { list.length(chunk) })
-  |> list.fold(0, int.max)
+}
+
+pub fn q4p3(input) {
+  let numbers = get_input_p3(input)
+
+  echo numbers
+  list.fold(numbers, 1.0, fn(acc, tup) {
+    let #(n1, n2) = tup
+    let f1 = int.to_float(n1)
+    let f2 = int.to_float(n2)
+    acc *. f2 /. f1
+  })
 }

@@ -33,3 +33,7 @@ pub fn q4p2_2_test() {
   assert quest4.q4p2(q4_inputs.sample_input_2, 10_000_000_000_000)
     == 1_274_509_803_922
 }
+
+pub fn q4p3_test() {
+  assert quest4.q4p3(q4_inputs.sample_input_3) == 4.0
+}

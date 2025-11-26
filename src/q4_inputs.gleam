@@ -14,6 +14,13 @@ pub fn sample_input_1() {
 8"
 }
 
+pub fn sample_input_3() {
+  "5
+5|10
+10|20
+5"
+}
+
 pub fn input_p1() {
   "1000
 997
