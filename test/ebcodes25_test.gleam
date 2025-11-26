@@ -1,4 +1,5 @@
 import gleeunit
+import q4_inputs
 import quest3
 import quest4
 
@@ -20,5 +21,15 @@ pub fn q3p3_test() {
 }
 
 pub fn q4p1_test() {
-  assert quest4.q4p1(quest4.sample_input_p1) == 32_400.0
+  assert quest4.q4p1(q4_inputs.sample_input_2) == 15_888
+}
+
+pub fn q4p2_test() {
+  assert quest4.q4p2(q4_inputs.sample_input_1, 10_000_000_000_000)
+    == 625_000_000_000
+}
+
+pub fn q4p2_2_test() {
+  assert quest4.q4p2(q4_inputs.sample_input_2, 10_000_000_000_000)
+    == 1_274_509_803_922
 }
