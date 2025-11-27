@@ -77,15 +77,22 @@ fn get_input_p3(input) {
 pub fn q4p3(input, turns) {
   let numbers = get_input_p3(input)
 
-  echo numbers
-  let last_wheel_turns =
-    list.fold(numbers, 1.0, fn(acc, tup) {
+  let first = case list.first(numbers) {
+    Ok(first) -> first
+    Error(_) -> panic as "Empty list"
+  }
+  let #(_, last_wheel_size) = first
+  let rest = list.drop(numbers, 1)
+  let #(factor, _last_wheel_size) =
+    list.fold(rest, #(1.0, last_wheel_size), fn(acc, tup) {
       let #(n1, n2) = tup
       let f1 = int.to_float(n1)
-      let f2 = int.to_float(n2)
-      acc *. f2 /. f1
+      let #(total_fact, last_wheel_size) = acc
+      let flast = int.to_float(last_wheel_size)
+
+      let fact = total_fact *. flast /. f1
+      #(fact, n2)
     })
-    *. int.to_float(turns)
-    |> float.truncate()
-  last_wheel_turns
+  factor *. int.to_float(turns)
+  |> float.truncate()
 }
