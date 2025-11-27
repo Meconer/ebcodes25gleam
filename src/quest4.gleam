@@ -1,3 +1,4 @@
+import gleam/float
 import gleam/int
 import gleam/list
 import gleam/string
@@ -73,14 +74,18 @@ fn get_input_p3(input) {
   })
 }
 
-pub fn q4p3(input) {
+pub fn q4p3(input, turns) {
   let numbers = get_input_p3(input)
 
   echo numbers
-  list.fold(numbers, 1.0, fn(acc, tup) {
-    let #(n1, n2) = tup
-    let f1 = int.to_float(n1)
-    let f2 = int.to_float(n2)
-    acc *. f2 /. f1
-  })
+  let last_wheel_turns =
+    list.fold(numbers, 1.0, fn(acc, tup) {
+      let #(n1, n2) = tup
+      let f1 = int.to_float(n1)
+      let f2 = int.to_float(n2)
+      acc *. f2 /. f1
+    })
+    *. int.to_float(turns)
+    |> float.truncate()
+  last_wheel_turns
 }

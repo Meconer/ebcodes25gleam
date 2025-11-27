@@ -35,5 +35,9 @@ pub fn q4p2_2_test() {
 }
 
 pub fn q4p3_test() {
-  assert quest4.q4p3(q4_inputs.sample_input_3) == 4.0
+  assert quest4.q4p3(q4_inputs.sample_input_3, 100) == 400
+}
+
+pub fn q4p3_2_test() {
+  assert quest4.q4p3(q4_inputs.sample_input_4, 100) == 6818
 }
