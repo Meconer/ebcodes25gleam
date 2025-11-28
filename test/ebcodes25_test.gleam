@@ -2,6 +2,7 @@ import gleeunit
 import q4_inputs
 import quest3
 import quest4
+import quest5
 
 pub fn main() -> Nil {
   gleeunit.main()
@@ -40,4 +41,10 @@ pub fn q4p3_test() {
 
 pub fn q4p3_2_test() {
   assert quest4.q4p3(q4_inputs.sample_input_4, 100) == 6818
+}
+
+import q5_inputs
+
+pub fn q5p1_test() {
+  assert quest5.q5p1(q5_inputs.sample_input_1) == "581078"
 }
