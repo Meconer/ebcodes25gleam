@@ -1,6 +1,6 @@
+import gleam/bit_array
 import gleam/int
 import gleam/list
-import gleam/order
 import gleam/string
 
 pub type TernaryTree(a) {
@@ -74,6 +74,20 @@ pub fn q5p1(input) {
       }
     })
   let tree = build_tree(data)
-  echo tree
-  ""
+  let answer = tree_to_string(tree)
+  answer
+}
+
+fn tree_to_string(tree: TernaryTree(Int)) -> String {
+  rec_to_string(tree, "")
+}
+
+fn rec_to_string(tree: TernaryTree(Int), string: String) -> String {
+  case tree {
+    Leaf -> string
+    Node(value, _left, middle, _right) -> {
+      let string = string <> int.to_string(value)
+      rec_to_string(middle, string)
+    }
+  }
 }

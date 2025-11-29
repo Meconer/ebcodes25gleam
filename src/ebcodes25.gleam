@@ -56,7 +56,7 @@ import quest5
 pub fn q5() -> Nil {
   io.print("Q5p1: ")
 
-  echo quest5.q5p1(q5_inputs.sample_input_1)
+  echo quest5.q5p1(q5_inputs.input_p1)
   // io.println(quest5.q5p1(q5_inputs.sample_input_1))
   // io.print("Q5p2: ")
   // io.println(
