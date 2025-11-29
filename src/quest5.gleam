@@ -12,13 +12,46 @@ fn tree_build_helper(tree: TernaryTree(Int), n: Int) -> TernaryTree(Int) {
   case tree {
     Leaf -> Node(value: n, left: -1, middle: Leaf, right: -1)
     Node(value, left, middle, right) ->
-      case int.compare(n, value) {
-        order.Lt ->
-          case value {
-            -1 -> Node(n, Leaf, middle, right)
-            _ -> Node(value, tree_build_helper(left, n), middle, right)
-            order.Eq -> Node(value, left, tree_build_helper(middle, n), right)
-            order.Gt -> Node(value, left, middle, tree_build_helper(right, n))
+      case n < value {
+        // Check left because n is less than the middle value
+        True ->
+          case left >= 0 {
+            // Left already occupied
+            True ->
+              Node(
+                value: value,
+                left: left,
+                middle: tree_build_helper(middle, n),
+                right: right,
+              )
+            // Left unoccupied
+            False -> Node(value: value, left: n, middle: middle, right: right)
+          }
+        False ->
+          case n > value {
+            // Check right because n is greater than the middle value
+            True ->
+              case right >= 0 {
+                // Right already occupied
+                True ->
+                  Node(
+                    value: value,
+                    left: left,
+                    middle: tree_build_helper(middle, n),
+                    right: right,
+                  )
+                // Right unoccupied
+                False ->
+                  Node(value: value, left: left, middle: middle, right: n)
+              }
+            // n is equal to value, go to middle
+            False ->
+              Node(
+                value: value,
+                left: left,
+                middle: tree_build_helper(middle, n),
+                right: right,
+              )
           }
       }
   }
