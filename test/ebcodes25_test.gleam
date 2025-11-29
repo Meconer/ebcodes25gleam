@@ -48,3 +48,7 @@ import q5_inputs
 pub fn q5p1_test() {
   assert quest5.q5p1(q5_inputs.sample_input_1) == "581078"
 }
+
+pub fn q5p2_test() {
+  assert quest5.q5p2(q5_inputs.sample_input_2) == 77_053
+}

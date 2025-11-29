@@ -1,4 +1,3 @@
-import gleam/bit_array
 import gleam/int
 import gleam/list
 import gleam/string
@@ -61,18 +60,21 @@ pub fn build_tree(data: List(Int)) -> TernaryTree(Int) {
   list.fold(data, Leaf, tree_build_helper)
 }
 
+fn string_to_data(input: String) -> List(Int) {
+  let assert [_id, data] = input |> string.split(on: ":")
+  data
+  |> string.split(on: ",")
+  |> list.map(string.trim)
+  |> list.map(fn(el) {
+    case int.parse(el) {
+      Ok(n) -> n
+      Error(_) -> 0
+    }
+  })
+}
+
 pub fn q5p1(input) {
-  let assert [_id, data] = input() |> string.split(on: ":")
-  let data =
-    data
-    |> string.split(on: ",")
-    |> list.map(string.trim)
-    |> list.map(fn(el) {
-      case int.parse(el) {
-        Ok(n) -> n
-        Error(_) -> 0
-      }
-    })
+  let data = string_to_data(input())
   let tree = build_tree(data)
   let answer = tree_to_string(tree)
   answer
@@ -90,4 +92,29 @@ fn rec_to_string(tree: TernaryTree(Int), string: String) -> String {
       rec_to_string(middle, string)
     }
   }
+}
+
+pub fn q5p2(input) {
+  let inp_list = string.split(input(), on: "\n")
+  let tree_vals =
+    inp_list
+    |> list.map(fn(line) {
+      let data = string_to_data(line)
+      let tree = build_tree(data)
+      let answer_str = tree_to_string(tree)
+      case int.parse(answer_str) {
+        Ok(answer_int) -> answer_int
+        Error(_) -> panic as "Failed to parse answer_str"
+      }
+    })
+    |> list.sort(by: int.compare)
+  let smallest = case list.first(tree_vals) {
+    Ok(n) -> n
+    Error(_) -> panic as "Empty list"
+  }
+  let largest = case list.last(tree_vals) {
+    Ok(n) -> n
+    Error(_) -> panic as "Empty list"
+  }
+  largest - smallest
 }

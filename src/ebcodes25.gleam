@@ -57,11 +57,8 @@ pub fn q5() -> Nil {
   io.print("Q5p1: ")
 
   echo quest5.q5p1(q5_inputs.input_p1)
-  // io.println(quest5.q5p1(q5_inputs.sample_input_1))
-  // io.print("Q5p2: ")
-  // io.println(
-  //   quest5.q5p2(q4_inputs.input_p2, 10_000_000_000_000) |> int.to_string,
-  // )
+  io.print("Q5p2: ")
+  io.println(quest5.q5p2(q5_inputs.input_p2) |> int.to_string)
   // io.print("Q4p3: ")
   // io.println(quest4.q4p3(q4_inputs.input_p3, 100) |> int.to_string)
   Nil
