@@ -1,5 +1,6 @@
 import gleam/int
 import gleam/list
+import gleam/order
 import gleam/string
 
 pub type TernaryTree(a) {
@@ -125,6 +126,58 @@ pub fn q5p2(input) {
   largest - smallest
 }
 
+pub type Sword {
+  Sword(id: Int, value: TernaryTree(Int))
+}
+
+fn tree_value(tree: TernaryTree(Int)) -> Int {
+  case tree_to_string(tree) |> int.parse() {
+    Ok(n) -> n
+    Error(_) -> panic as "Failed to parse tree value"
+  }
+}
+
+fn sword_compare(a: Sword, b: Sword) -> order.Order {
+  let sword_a_val = tree_value(a.value)
+  let sword_b_val = tree_value(b.value)
+  echo "Comparing Sword"
+    <> int.to_string(a.id)
+    <> " with value "
+    <> int.to_string(sword_a_val)
+  echo "to Sword "
+    <> int.to_string(b.id)
+    <> "with value "
+    <> int.to_string(sword_b_val)
+  let res = case int.compare(sword_a_val, sword_b_val) {
+    order.Lt -> order.Lt
+    order.Gt -> order.Gt
+    order.Eq -> {
+      // If values are equal, compare by id
+      case int.compare(b.id, a.id) {
+        order.Lt -> order.Lt
+        order.Gt -> order.Gt
+        order.Eq -> order.Eq
+      }
+    }
+  }
+  echo res
+}
+
 pub fn q5p3(input) {
-  todo
+  let inp_list = string.split(input(), on: "\n")
+  let swords: List(Sword) =
+    inp_list
+    |> list.map(fn(line) {
+      let #(id, data) = string_to_data(line)
+      let tree = build_tree(data)
+      let answer_str = tree_to_string(tree)
+      case int.parse(answer_str) {
+        Ok(answer_int) -> answer_int
+        Error(_) -> panic as "Failed to parse answer_str"
+      }
+      Sword(id: id, value: tree)
+    })
+    |> list.sort(by: sword_compare)
+  echo swords
+  55
 }
