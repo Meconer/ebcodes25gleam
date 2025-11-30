@@ -60,21 +60,27 @@ pub fn build_tree(data: List(Int)) -> TernaryTree(Int) {
   list.fold(data, Leaf, tree_build_helper)
 }
 
-fn string_to_data(input: String) -> List(Int) {
-  let assert [_id, data] = input |> string.split(on: ":")
-  data
-  |> string.split(on: ",")
-  |> list.map(string.trim)
-  |> list.map(fn(el) {
-    case int.parse(el) {
-      Ok(n) -> n
-      Error(_) -> 0
-    }
-  })
+fn string_to_data(input: String) -> #(Int, List(Int)) {
+  let assert [id, data] = input |> string.split(on: ":")
+  let data =
+    data
+    |> string.split(on: ",")
+    |> list.map(string.trim)
+    |> list.map(fn(el) {
+      case int.parse(el) {
+        Ok(n) -> n
+        Error(_) -> 0
+      }
+    })
+  let id = case int.parse(id) {
+    Ok(n) -> n
+    Error(_) -> 0
+  }
+  #(id, data)
 }
 
 pub fn q5p1(input) {
-  let data = string_to_data(input())
+  let #(_id, data) = string_to_data(input())
   let tree = build_tree(data)
   let answer = tree_to_string(tree)
   answer
@@ -99,7 +105,7 @@ pub fn q5p2(input) {
   let tree_vals =
     inp_list
     |> list.map(fn(line) {
-      let data = string_to_data(line)
+      let #(_id, data) = string_to_data(line)
       let tree = build_tree(data)
       let answer_str = tree_to_string(tree)
       case int.parse(answer_str) {
@@ -117,4 +123,8 @@ pub fn q5p2(input) {
     Error(_) -> panic as "Empty list"
   }
   largest - smallest
+}
+
+pub fn q5p3(input) {
+  todo
 }
