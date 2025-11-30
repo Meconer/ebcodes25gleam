@@ -140,13 +140,13 @@ fn tree_value(tree: TernaryTree(Int)) -> Int {
 fn sword_compare(a: Sword, b: Sword) -> order.Order {
   let sword_a_val = tree_value(a.value)
   let sword_b_val = tree_value(b.value)
-  echo "Comparing Sword"
+  echo "Comparing Sword "
     <> int.to_string(a.id)
     <> " with value "
     <> int.to_string(sword_a_val)
   echo "to Sword "
     <> int.to_string(b.id)
-    <> "with value "
+    <> " with value "
     <> int.to_string(sword_b_val)
   let res = case int.compare(sword_a_val, sword_b_val) {
     order.Lt -> order.Lt

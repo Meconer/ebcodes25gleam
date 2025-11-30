@@ -54,5 +54,5 @@ pub fn q5p2_test() {
 }
 
 pub fn q5p3_test() {
-  assert quest5.q5p3(q5_inputs.sample_input_2) == 77_053
+  assert quest5.q5p3(q5_inputs.sample_input_3) == 77_053
 }
