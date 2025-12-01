@@ -1,4 +1,5 @@
 import gleam/int
+import gleam/io
 import gleam/list
 import gleam/order
 import gleam/string
@@ -137,6 +138,53 @@ fn tree_value(tree: TernaryTree(Int)) -> Int {
   }
 }
 
+fn get_str(i: Int) {
+  case i {
+    i if i < 0 -> " "
+    i -> int.to_string(i)
+  }
+}
+
+fn print_bar(tree: TernaryTree(Int)) {
+  case tree {
+    Leaf -> Nil
+    Node(value, left, middle, right) -> {
+      io.print(get_str(left) <> " - ")
+      io.print(int.to_string(value) <> " - ")
+      io.println(get_str(right))
+      io.println("    |")
+      print_bar(middle)
+    }
+  }
+}
+
+fn print_sword(sword: Sword) {
+  io.println(int.to_string(sword.id) <> ":")
+  print_bar(sword.value)
+  io.println("")
+}
+
+fn sword_val(tree: TernaryTree(Int)) -> List(Int) {
+  case tree {
+    Leaf -> []
+    Node(value, left, middle, right) -> {
+      let s =
+        get_str(left) |> string.trim
+        <> { get_str(value) |> string.trim }
+        <> { get_str(right) |> string.trim }
+      let val = case int.parse(s) {
+        Ok(i) -> i
+        Error(_) -> panic as "Cannot parse int"
+      }
+      [val, ..sword_val(middle)]
+    }
+  }
+}
+
+fn get_sword_vals(sword: Sword) -> List(Int) {
+  sword_val(sword.value)
+}
+
 fn sword_compare(a: Sword, b: Sword) -> order.Order {
   let sword_a_val = tree_value(a.value)
   let sword_b_val = tree_value(b.value)
@@ -144,10 +192,13 @@ fn sword_compare(a: Sword, b: Sword) -> order.Order {
     <> int.to_string(a.id)
     <> " with value "
     <> int.to_string(sword_a_val)
+  print_sword(a)
+  echo sword_val(a.value)
   echo "to Sword "
     <> int.to_string(b.id)
     <> " with value "
     <> int.to_string(sword_b_val)
+  print_sword(b)
   let res = case int.compare(sword_a_val, sword_b_val) {
     order.Lt -> order.Lt
     order.Gt -> order.Gt
