@@ -173,7 +173,7 @@ fn sword_val(tree: TernaryTree(Int)) -> List(Int) {
   }
 }
 
-fn sword_compare(a: Sword, b: Sword) -> order.Order {
+pub fn sword_compare(a: Sword, b: Sword) -> order.Order {
   let sword_a_val = tree_value(a.tree)
   let sword_b_val = tree_value(b.tree)
   let res = case int.compare(sword_a_val, sword_b_val) {
@@ -182,13 +182,15 @@ fn sword_compare(a: Sword, b: Sword) -> order.Order {
     order.Eq -> {
       // If values are equal, compare by fishbone values 
       case fishbone_compare(a, b) {
-        order.Lt -> order.Lt
         order.Gt -> order.Gt
-        order.Eq -> order.Eq
+        order.Lt -> order.Lt
+        order.Eq -> {
+          int.compare(a.id, b.id)
+        }
       }
     }
   }
-  echo res
+  res
 }
 
 fn fishbone_compare(a: Sword, b: Sword) -> order.Order {
@@ -237,6 +239,12 @@ fn level_val(left: Option(Int), val: Int, right: Option(Int)) -> Int {
   int_val
 }
 
+fn calc_checksum(sword_list: List(Sword)) {
+  list.index_fold(sword_list, 0, fn(acc, sword, idx) {
+    acc + { idx + 1 } * sword.id
+  })
+}
+
 pub fn q5p3(input) {
   let inp_list = string.split(input(), on: "\n")
   let swords: List(Sword) =
@@ -252,6 +260,7 @@ pub fn q5p3(input) {
       Sword(id: id, tree: tree)
     })
     |> list.sort(by: sword_compare)
-  echo swords
-  55
+    |> list.reverse
+
+  calc_checksum(swords)
 }

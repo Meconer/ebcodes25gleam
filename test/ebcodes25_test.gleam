@@ -1,3 +1,4 @@
+import gleam/order
 import gleeunit
 import q4_inputs
 import quest3
@@ -57,10 +58,28 @@ pub fn fishbone_test() {
   let test1_lst = [7, 1, 9, 1, 6, 9, 8, 3, 7, 2]
   let tree1 = quest5.build_tree(test1_lst)
   let fishbones = quest5.calc_fishbones(tree1, [])
-  assert fishbones == []
+  assert fishbones == [179, 16, 89, 237]
+}
+
+pub fn fishbone_compare_test() {
+  let test1_lst = [7, 1, 9, 1, 6, 9, 8, 3, 7, 2]
+  let tree1 = quest5.build_tree(test1_lst)
+  let sword1 = quest5.Sword(1, tree1)
+  let test2_lst = [7, 1, 9, 1, 6, 9, 8, 3, 8, 2]
+  let tree2 = quest5.build_tree(test2_lst)
+  let sword2 = quest5.Sword(2, tree2)
+  let test3_lst = [7, 1, 9, 1, 6, 9, 8, 3, 6, 2]
+  let tree3 = quest5.build_tree(test3_lst)
+  let sword3 = quest5.Sword(3, tree3)
+  assert quest5.sword_compare(sword1, sword2) == order.Lt
+  assert quest5.sword_compare(sword1, sword3) == order.Gt
+  assert quest5.sword_compare(sword3, sword3) == order.Eq
 }
 
 pub fn q5p3_test() {
-  todo
-  //assert quest5.q5p3(q5_inputs.sample_input_3) == 77_053
+  assert quest5.q5p3(q5_inputs.sample_input_3) == 260
+}
+
+pub fn q5p32_test() {
+  assert quest5.q5p3(q5_inputs.sample_input_32) == 4
 }
