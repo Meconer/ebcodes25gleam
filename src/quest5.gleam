@@ -1,56 +1,67 @@
 import gleam/int
 import gleam/io
 import gleam/list
+import gleam/option.{type Option, None, Some}
 import gleam/order
 import gleam/string
 
 pub type TernaryTree(a) {
   Leaf
-  Node(value: a, left: a, middle: TernaryTree(a), right: a)
+  Node(value: a, left: Option(a), sub_tree: TernaryTree(a), right: Option(a))
+}
+
+pub type Sword {
+  Sword(id: Int, tree: TernaryTree(Int))
 }
 
 fn tree_build_helper(tree: TernaryTree(Int), n: Int) -> TernaryTree(Int) {
   case tree {
-    Leaf -> Node(value: n, left: -1, middle: Leaf, right: -1)
+    Leaf -> Node(value: n, left: None, sub_tree: Leaf, right: None)
     Node(value, left, middle, right) ->
       case n < value {
         // Check left because n is less than the middle value
         True ->
-          case left >= 0 {
+          case left {
             // Left already occupied
-            True ->
+            Some(_left_val) ->
               Node(
                 value: value,
                 left: left,
-                middle: tree_build_helper(middle, n),
+                sub_tree: tree_build_helper(middle, n),
                 right: right,
               )
             // Left unoccupied
-            False -> Node(value: value, left: n, middle: middle, right: right)
+            None ->
+              Node(value: value, left: Some(n), sub_tree: middle, right: right)
           }
         False ->
           case n > value {
             // Check right because n is greater than the middle value
             True ->
-              case right >= 0 {
+              case right {
                 // Right already occupied
-                True ->
+                Some(_right_val) ->
                   Node(
                     value: value,
                     left: left,
-                    middle: tree_build_helper(middle, n),
+                    sub_tree: tree_build_helper(middle, n),
                     right: right,
                   )
                 // Right unoccupied
-                False ->
-                  Node(value: value, left: left, middle: middle, right: n)
+                None ->
+                  Node(
+                    value: value,
+                    left: left,
+                    sub_tree: middle,
+                    right: Some(n),
+                  )
               }
             // n is equal to value, go to middle
             False ->
               Node(
                 value: value,
                 left: left,
-                middle: tree_build_helper(middle, n),
+                sub_tree: tree_build_helper(middle, n),
                 right: right,
               )
           }
@@ -69,16 +80,11 @@ fn string_to_data(input: String) -> #(Int, List(Int)) {
     |> string.split(on: ",")
     |> list.map(string.trim)
     |> list.map(fn(el) {
-      case int.parse(el) {
-        Ok(n) -> n
-        Error(_) -> 0
-      }
+      let assert Ok(n) = int.parse(el)
+      n
     })
-  let id = case int.parse(id) {
-    Ok(n) -> n
-    Error(_) -> 0
-  }
-  #(id, data)
+  let assert Ok(int_id) = int.parse(id)
+  #(int_id, data)
 }
 
 pub fn q5p1(input) {
@@ -110,38 +116,24 @@ pub fn q5p2(input) {
       let #(_id, data) = string_to_data(line)
       let tree = build_tree(data)
       let answer_str = tree_to_string(tree)
-      case int.parse(answer_str) {
-        Ok(answer_int) -> answer_int
-        Error(_) -> panic as "Failed to parse answer_str"
-      }
+      let assert Ok(n) = int.parse(answer_str)
+      n
     })
     |> list.sort(by: int.compare)
-  let smallest = case list.first(tree_vals) {
-    Ok(n) -> n
-    Error(_) -> panic as "Empty list"
-  }
-  let largest = case list.last(tree_vals) {
-    Ok(n) -> n
-    Error(_) -> panic as "Empty list"
-  }
+  let assert Ok(smallest) = list.first(tree_vals)
+  let assert Ok(largest) = list.last(tree_vals)
   largest - smallest
 }
 
-pub type Sword {
-  Sword(id: Int, value: TernaryTree(Int))
-}
-
 fn tree_value(tree: TernaryTree(Int)) -> Int {
-  case tree_to_string(tree) |> int.parse() {
-    Ok(n) -> n
-    Error(_) -> panic as "Failed to parse tree value"
-  }
+  let assert Ok(n) = tree_to_string(tree) |> int.parse()
+  n
 }
 
-fn get_str(i: Int) {
+fn get_str(i: Option(Int)) {
   case i {
-    i if i < 0 -> " "
-    i -> int.to_string(i)
+    None -> " "
+    Some(i) -> int.to_string(i)
   }
 }
 
@@ -160,7 +152,7 @@ fn print_bar(tree: TernaryTree(Int)) {
 
 fn print_sword(sword: Sword) {
   io.println(int.to_string(sword.id) <> ":")
-  print_bar(sword.value)
+  print_bar(sword.tree)
   io.println("")
 }
 
@@ -170,7 +162,7 @@ fn sword_val(tree: TernaryTree(Int)) -> List(Int) {
     Node(value, left, middle, right) -> {
       let s =
         get_str(left) |> string.trim
-        <> { get_str(value) |> string.trim }
+        <> { int.to_string(value) |> string.trim }
         <> { get_str(right) |> string.trim }
       let val = case int.parse(s) {
         Ok(i) -> i
@@ -181,30 +173,15 @@ fn sword_val(tree: TernaryTree(Int)) -> List(Int) {
   }
 }
 
-fn get_sword_vals(sword: Sword) -> List(Int) {
-  sword_val(sword.value)
-}
-
 fn sword_compare(a: Sword, b: Sword) -> order.Order {
-  let sword_a_val = tree_value(a.value)
-  let sword_b_val = tree_value(b.value)
-  echo "Comparing Sword "
-    <> int.to_string(a.id)
-    <> " with value "
-    <> int.to_string(sword_a_val)
-  print_sword(a)
-  echo sword_val(a.value)
-  echo "to Sword "
-    <> int.to_string(b.id)
-    <> " with value "
-    <> int.to_string(sword_b_val)
-  print_sword(b)
+  let sword_a_val = tree_value(a.tree)
+  let sword_b_val = tree_value(b.tree)
   let res = case int.compare(sword_a_val, sword_b_val) {
     order.Lt -> order.Lt
     order.Gt -> order.Gt
     order.Eq -> {
-      // If values are equal, compare by id
-      case int.compare(b.id, a.id) {
+      // If values are equal, compare by fishbone values 
+      case fishbone_compare(a, b) {
         order.Lt -> order.Lt
         order.Gt -> order.Gt
         order.Eq -> order.Eq
@@ -212,6 +189,52 @@ fn sword_compare(a: Sword, b: Sword) -> order.Order {
     }
   }
   echo res
+}
+
+fn fishbone_compare(a: Sword, b: Sword) -> order.Order {
+  let a_fishbone = calc_fishbones(a.tree, [])
+  let b_fishbone = calc_fishbones(b.tree, [])
+  compare_int_lists(a_fishbone, b_fishbone)
+}
+
+pub fn compare_int_lists(a: List(Int), b: List(Int)) -> order.Order {
+  case a, b {
+    // Take the first element of each list 
+    [head_a, ..tail_a], [head_b, ..tail_b] -> {
+      case int.compare(head_a, head_b) {
+        // If they are equal, move to the next elements
+        order.Eq -> compare_int_lists(tail_a, tail_b)
+        // If they are different, stop and return the result immediately 
+        diff -> diff
+      }
+    }
+    _, _ -> order.Eq
+  }
+}
+
+pub fn calc_fishbones(tree: TernaryTree(Int), acc: List(Int)) -> List(Int) {
+  case tree {
+    Leaf -> acc |> list.reverse()
+    Node(val, left, middle, right) -> {
+      let l_val = level_val(left, val, right)
+      calc_fishbones(middle, [l_val, ..acc])
+    }
+  }
+}
+
+fn level_val(left: Option(Int), val: Int, right: Option(Int)) -> Int {
+  let left_str = case left {
+    Some(n) -> int.to_string(n)
+    None -> ""
+  }
+  let val_str = int.to_string(val)
+  let right_str = case right {
+    Some(n) -> int.to_string(n)
+    None -> ""
+  }
+  let val = left_str <> val_str <> right_str
+  let assert Ok(int_val) = int.parse(val)
+  int_val
 }
 
 pub fn q5p3(input) {
@@ -226,7 +249,7 @@ pub fn q5p3(input) {
         Ok(answer_int) -> answer_int
         Error(_) -> panic as "Failed to parse answer_str"
       }
-      Sword(id: id, value: tree)
+      Sword(id: id, tree: tree)
     })
     |> list.sort(by: sword_compare)
   echo swords

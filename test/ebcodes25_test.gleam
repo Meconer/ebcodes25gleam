@@ -53,6 +53,14 @@ pub fn q5p2_test() {
   assert quest5.q5p2(q5_inputs.sample_input_2) == 77_053
 }
 
+pub fn fishbone_test() {
+  let test1_lst = [7, 1, 9, 1, 6, 9, 8, 3, 7, 2]
+  let tree1 = quest5.build_tree(test1_lst)
+  let fishbones = quest5.calc_fishbones(tree1, [])
+  assert fishbones == []
+}
+
 pub fn q5p3_test() {
-  assert quest5.q5p3(q5_inputs.sample_input_3) == 77_053
+  todo
+  //assert quest5.q5p3(q5_inputs.sample_input_3) == 77_053
 }
