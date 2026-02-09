@@ -1,5 +1,6 @@
 import gleam/int
-import gleam/io
+
+// import gleam/io
 import gleam/list
 import gleam/option.{type Option, None, Some}
 import gleam/order
@@ -130,48 +131,48 @@ fn tree_value(tree: TernaryTree(Int)) -> Int {
   n
 }
 
-fn get_str(i: Option(Int)) {
-  case i {
-    None -> " "
-    Some(i) -> int.to_string(i)
-  }
-}
+// fn get_str(i: Option(Int)) {
+//   case i {
+//     None -> " "
+//     Some(i) -> int.to_string(i)
+//   }
+// }
 
-fn print_bar(tree: TernaryTree(Int)) {
-  case tree {
-    Leaf -> Nil
-    Node(value, left, middle, right) -> {
-      io.print(get_str(left) <> " - ")
-      io.print(int.to_string(value) <> " - ")
-      io.println(get_str(right))
-      io.println("    |")
-      print_bar(middle)
-    }
-  }
-}
+// fn print_bar(tree: TernaryTree(Int)) {
+//   case tree {
+//     Leaf -> Nil
+//     Node(value, left, middle, right) -> {
+//       io.print(get_str(left) <> " - ")
+//       io.print(int.to_string(value) <> " - ")
+//       io.println(get_str(right))
+//       io.println("    |")
+//       print_bar(middle)
+//     }
+//   }
+// }
 
-fn print_sword(sword: Sword) {
-  io.println(int.to_string(sword.id) <> ":")
-  print_bar(sword.tree)
-  io.println("")
-}
+// fn print_sword(sword: Sword) {
+//   io.println(int.to_string(sword.id) <> ":")
+//   print_bar(sword.tree)
+//   io.println("")
+// }
 
-fn sword_val(tree: TernaryTree(Int)) -> List(Int) {
-  case tree {
-    Leaf -> []
-    Node(value, left, middle, right) -> {
-      let s =
-        get_str(left) |> string.trim
-        <> { int.to_string(value) |> string.trim }
-        <> { get_str(right) |> string.trim }
-      let val = case int.parse(s) {
-        Ok(i) -> i
-        Error(_) -> panic as "Cannot parse int"
-      }
-      [val, ..sword_val(middle)]
-    }
-  }
-}
+// fn sword_val(tree: TernaryTree(Int)) -> List(Int) {
+//   case tree {
+//     Leaf -> []
+//     Node(value, left, middle, right) -> {
+//       let s =
+//         get_str(left) |> string.trim
+//         <> { int.to_string(value) |> string.trim }
+//         <> { get_str(right) |> string.trim }
+//       let val = case int.parse(s) {
+//         Ok(i) -> i
+//         Error(_) -> panic as "Cannot parse int"
+//       }
+//       [val, ..sword_val(middle)]
+//     }
+//   }
+// }
 
 pub fn sword_compare(a: Sword, b: Sword) -> order.Order {
   let sword_a_val = tree_value(a.tree)

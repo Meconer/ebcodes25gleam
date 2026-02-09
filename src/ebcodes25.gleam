@@ -3,6 +3,7 @@ import gleam/io
 import gleam/list
 import gleam/string
 import q5_inputs
+import quest6
 import simplifile
 
 // import quest1
@@ -63,7 +64,17 @@ pub fn q5() -> Nil {
   Nil
 }
 
+pub fn q6() -> Nil {
+  io.print("Q6p1: ")
+  io.println(quest6.q6p1(quest6.input_p1()) |> int.to_string)
+  io.print("Q6p2: ")
+  io.println(quest6.q6p2(quest6.input_p2()) |> int.to_string)
+  // io.print("Q5p3: ")
+  // io.println(quest5.q5p3(q5_inputs.input_p3) |> int.to_string)
+  Nil
+}
+
 pub fn main() -> Nil {
-  q5()
+  q6()
   Nil
 }
