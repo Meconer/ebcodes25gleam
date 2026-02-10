@@ -92,3 +92,7 @@ pub fn q6p1_test() {
 pub fn q6p2_test() {
   assert quest6.q6p2(quest6.sample_input_p1()) == 11
 }
+
+pub fn q6p3_test() {
+  assert quest6.q6p3(quest6.sample_input_p3) == 11
+}
