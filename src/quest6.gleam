@@ -1,3 +1,4 @@
+import gleam/dict
 import gleam/list
 import gleam/string
 
@@ -49,12 +50,69 @@ fn count_mentors(inp: List(String), category: String, acc: Int) -> Int {
   }
 }
 
-fn get_pers(tents, idx, len, repeat) {
-  todo
+fn get_pers(tents: dict.Dict(Int, a), idx: Int, repeat: Int) -> Result(a, Nil) {
+  let tot_length = dict.size(tents) * repeat
+  case idx {
+    idx if idx < 0 -> Error(Nil)
+    idx if idx >= tot_length -> Error(Nil)
+    idx -> {
+      let mod_idx = idx % dict.size(tents)
+      let tent = dict.get(tents, mod_idx)
+      tent
+    }
+  }
 }
 
 pub fn q6p3(inp: String, dist_lim: Int, repeat: Int) {
-  todo
+  echo inp
+  let len = string.length(inp)
+  let tents_lst = string.to_graphemes(inp)
+  let tents =
+    list.index_map(tents_lst, fn(el, idx) { #(idx, el) })
+    |> dict.from_list()
+  list.range(0, len - 1)
+  |> list.fold(0, fn(acc, key) {
+    acc + count_mentors_p3(tents, repeat, dist_lim, key)
+  })
+}
+
+fn count_mentors_p3(
+  tents: dict.Dict(Int, String),
+  repeat: Int,
+  dist_lim: Int,
+  key: Int,
+) -> Int {
+  let assert Ok(novice) = get_pers(tents, key, repeat)
+  case list.contains(["a", "b", "c"], novice) {
+    False ->
+      //Not a novice
+      0
+    True -> {
+      let mentor = string.uppercase(novice)
+      list.range(1, dist_lim)
+      |> list.map(fn(delta) {
+        let pers_before = get_pers(tents, key - delta, repeat)
+
+        let pers_after = get_pers(tents, key + delta, repeat)
+        let count =
+          is_mentor_cnt(pers_before, mentor) + is_mentor_cnt(pers_after, mentor)
+        count
+      })
+      |> list.fold(0, fn(acc, el) { el + acc })
+    }
+  }
+}
+
+fn is_mentor_cnt(person: Result(String, Nil), mentor: String) -> Int {
+  case person {
+    Ok(pers) -> {
+      case pers == mentor {
+        True -> 1
+        False -> 0
+      }
+    }
+    Error(_) -> 0
+  }
 }
 
 pub fn sample_input_p1() {
