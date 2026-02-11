@@ -64,16 +64,31 @@ fn get_pers(tents: dict.Dict(Int, a), idx: Int, repeat: Int) -> Result(a, Nil) {
 }
 
 pub fn q6p3(inp: String, dist_lim: Int, repeat: Int) {
-  echo inp
   let len = string.length(inp)
   let tents_lst = string.to_graphemes(inp)
   let tents =
     list.index_map(tents_lst, fn(el, idx) { #(idx, el) })
     |> dict.from_list()
-  list.range(0, len - 1)
-  |> list.fold(0, fn(acc, key) {
-    acc + count_mentors_p3(tents, repeat, dist_lim, key)
-  })
+
+  let first_part_cnt =
+    list.range(0, len - 1)
+    |> list.fold(0, fn(acc, key) {
+      acc + count_mentors_p3(tents, repeat, dist_lim, key)
+    })
+    |> echo
+  let last_part_cnt =
+    list.range(len * { repeat - 1 }, len - 1)
+    |> list.fold(0, fn(acc, key) {
+      acc + count_mentors_p3(tents, repeat, dist_lim, key)
+    })
+    |> echo
+  let middle_part_cnt =
+    list.range(len, len + repeat - 1)
+    |> list.fold(0, fn(acc, key) {
+      acc + count_mentors_p3(tents, repeat, dist_lim, key)
+    })
+    |> echo
+  first_part_cnt + last_part_cnt + middle_part_cnt * { repeat - 2 }
 }
 
 fn count_mentors_p3(
