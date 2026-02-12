@@ -96,5 +96,9 @@ pub fn q6p2_test() {
 pub fn q6p3_test() {
   assert quest6.q6p3(quest6.sample_input_p3, 10, 1) == 34
   assert quest6.q6p3(quest6.sample_input_p3, 10, 2) == 72
-  assert quest6.q6p3(quest6.sample_input_p3, 1000, 1000) == 3_442_321
+  let res = quest6.q6p3(quest6.sample_input_p3, 1000, 1000)
+  let r1 = res - 3_442_321
+  echo r1
+  echo r1 / 2
+  assert res == 3_442_321
 }
