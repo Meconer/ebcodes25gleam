@@ -52,6 +52,9 @@ fn count_mentors(inp: List(String), category: String, acc: Int) -> Int {
 
 fn get_pers(tents: dict.Dict(Int, a), idx: Int, repeat: Int) -> Result(a, Nil) {
   let tot_length = dict.size(tents) * repeat
+  echo tot_length
+  echo idx
+  echo repeat
   case idx {
     idx if idx < 0 -> Error(Nil)
     idx if idx >= tot_length -> Error(Nil)
@@ -70,25 +73,43 @@ pub fn q6p3(inp: String, dist_lim: Int, repeat: Int) {
     list.index_map(tents_lst, fn(el, idx) { #(idx, el) })
     |> dict.from_list()
 
+  echo "---"
+  let first_start = 0
+  let first_end = len - 1
+  let second_start = len
+  let second_end = len + { repeat * len } - 1
+  let last_end = len * repeat - 1
+  let last_start = last_end - len + 1
+  echo first_end
+  echo second_start
+  echo second_end
+  echo last_start
+  echo last_end
+
   let first_part_cnt =
-    list.range(0, len - 1)
+    list.range(first_start, first_end)
     |> list.fold(0, fn(acc, key) {
       acc + count_mentors_p3(tents, repeat, dist_lim, key)
     })
     |> echo
   let last_part_cnt =
-    list.range(len * { repeat - 1 }, len - 1)
+    list.range(second_start, second_end)
     |> list.fold(0, fn(acc, key) {
       acc + count_mentors_p3(tents, repeat, dist_lim, key)
     })
     |> echo
   let middle_part_cnt =
-    list.range(len, len + repeat - 1)
+    list.range(last_start, last_end)
     |> list.fold(0, fn(acc, key) {
       acc + count_mentors_p3(tents, repeat, dist_lim, key)
     })
     |> echo
-  first_part_cnt + last_part_cnt + middle_part_cnt * { repeat - 2 }
+  case repeat {
+    _repeat if repeat > 2 ->
+      first_part_cnt + last_part_cnt + middle_part_cnt * { repeat - 2 }
+    _repeat if repeat == 1 -> first_part_cnt + last_part_cnt
+    _repeat -> first_part_cnt
+  }
 }
 
 fn count_mentors_p3(
