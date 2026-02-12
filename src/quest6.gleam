@@ -71,19 +71,15 @@ pub fn q6p3(inp: String, dist_lim: Int, repeat: Int) {
     list.index_map(tents_lst, fn(el, idx) { #(idx, el) })
     |> dict.from_list()
 
-  echo "---"
   let part_len = int.max(len, dist_lim)
   let first_start = 0
   let first_end = part_len - 1
-  let second_start = part_len
-  let second_end = part_len + len - 1
+  let mid_start = part_len
+  let mid_end = part_len + len - 1
   let last_end = len * repeat - 1
   let last_start = last_end - part_len + 1
-  echo first_end
-  echo second_start
-  echo second_end
-  echo last_start
-  echo last_end
+  let no_of_mids = { last_start - 1 - mid_start } / len
+  let last_start = no_of_mids * len + mid_start
 
   let first_part_cnt =
     list.range(first_start, first_end)
@@ -94,7 +90,7 @@ pub fn q6p3(inp: String, dist_lim: Int, repeat: Int) {
     1 -> 0
     2 -> 0
     repeat ->
-      list.range(second_start, second_end)
+      list.range(mid_start, mid_end)
       |> list.fold(0, fn(acc, key) {
         acc + count_mentors_p3(tents, repeat, dist_lim, key)
       })
@@ -107,7 +103,7 @@ pub fn q6p3(inp: String, dist_lim: Int, repeat: Int) {
         acc + count_mentors_p3(tents, repeat, dist_lim, key)
       })
   }
-  first_part_cnt + middle_part_cnt * { repeat - 2 } + last_part_cnt
+  first_part_cnt + middle_part_cnt * no_of_mids + last_part_cnt
 }
 
 fn count_mentors_p3(
