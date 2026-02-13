@@ -105,5 +105,7 @@ pub fn main() -> Nil {
 // }
 
 pub fn q7p1_test() {
-  assert quest7.q6p1(quest6.sample_input_p1()) == 5
+  let res = quest7.q7p1(quest7.words_sample_p1, quest7.rules_sample_p1)
+  echo res
+  assert 0 == 1
 }
