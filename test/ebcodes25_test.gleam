@@ -106,6 +106,10 @@ pub fn main() -> Nil {
 
 pub fn q7p1_test() {
   let res = quest7.q7p1(quest7.words_sample_p1, quest7.rules_sample_p1)
-  echo res
-  assert 0 == 1
+  assert res == "Oroneth"
+}
+
+pub fn q7p2_test() {
+  let res = quest7.q7p2(quest7.words_sample_p2, quest7.rules_sample_p2)
+  assert res == 23
 }
