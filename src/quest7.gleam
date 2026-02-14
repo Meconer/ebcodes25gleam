@@ -4,7 +4,7 @@ import gleam/option
 import gleam/string
 import utils
 
-pub fn q7p1(words: String, rules: String) {
+fn get_words_and_rules(words, rules) {
   let words = words |> string.split(",")
   let rules =
     rules
@@ -17,6 +17,11 @@ pub fn q7p1(words: String, rules: String) {
       [#(pre, posts), ..acc]
     })
     |> dict.from_list()
+  #(words, rules)
+}
+
+pub fn q7p1(words: String, rules: String) {
+  let #(words, rules) = get_words_and_rules(words, rules)
   list.map(words, fn(word) {
     case check_word(word, rules) {
       True -> option.Some(word)
@@ -59,18 +64,7 @@ fn check_word(word: String, rules: dict.Dict(String, List(String))) {
 }
 
 pub fn q7p2(words: String, rules: String) {
-  let words = words |> string.split(",")
-  let rules =
-    rules
-    |> string.split("\n")
-    |> list.fold([], fn(acc, line) {
-      let parts = string.split(line, on: " > ")
-      let assert Ok(pre) = list.first(parts)
-      let assert Ok(post_str) = list.last(parts)
-      let posts = string.split(post_str, ",")
-      [#(pre, posts), ..acc]
-    })
-    |> dict.from_list()
+  let #(words, rules) = get_words_and_rules(words, rules)
   list.map(words, fn(word) {
     case check_word(word, rules) {
       True -> option.Some(word)
@@ -83,6 +77,10 @@ pub fn q7p2(words: String, rules: String) {
       option.None -> acc
     }
   })
+}
+
+pub fn q7p3(words: String, rules: String) {
+  let #(words, rules) = get_words_and_rules(words, rules)
 }
 
 pub const words_sample_p1 = "Oronris,Urakris,Oroneth,Uraketh"
@@ -167,3 +165,13 @@ t > h
 x > i
 H > e
 c > r,y,a"
+
+pub const words_sample_1_p3 = "Xaryt"
+
+pub const rules_sample_1_p3 = "X > a,o
+a > r,t
+r > y,e,a
+h > a,e,v
+t > h
+v > e
+y > p,t"
