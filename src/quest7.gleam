@@ -1,6 +1,9 @@
+import gleam/bool
 import gleam/dict
 import gleam/list
 import gleam/option
+import gleam/result
+import gleam/set
 import gleam/string
 import utils
 
@@ -58,7 +61,7 @@ fn is_pair_in_order(
   }
 }
 
-fn check_word(word: String, rules: dict.Dict(String, List(String))) {
+fn check_word(word: String, rules: dict.Dict(String, List(String))) -> Bool {
   string.to_graphemes(word)
   |> rec_check(rules, True)
 }
@@ -79,8 +82,72 @@ pub fn q7p2(words: String, rules: String) {
   })
 }
 
+fn build_words(
+  word: String,
+  rules: dict.Dict(String, List(String)),
+  min_length: Int,
+  max_length: Int,
+  word_acc: set.Set(String),
+) -> set.Set(String) {
+  let len = string.length(word)
+  use <- bool.guard(when: len > max_length, return: word_acc)
+  let assert Ok(last_letter) = string.last(word)
+  let followers =
+    dict.get(rules, last_letter)
+    |> result.unwrap([])
+  let new_words =
+    list.fold(followers, [], fn(acc, follower) {
+      [string.append(word, follower), ..acc]
+    })
+    |> set.from_list()
+  let next_words =
+    set.fold(new_words, set.new(), fn(innacc, nword) {
+      set.union(
+        build_words(nword, rules, min_length, max_length, set.new()),
+        innacc,
+      )
+    })
+  case string.length(word) >= min_length {
+    True -> {
+      set.insert(next_words, word)
+    }
+    False -> {
+      next_words
+    }
+  }
+}
+
+pub fn find_duplicates(items: List(a)) -> List(a) {
+  let #(_seen, dups) =
+    list.fold(over: items, from: #(set.new(), set.new()), with: fn(acc, item) {
+      let #(seen, dups) = acc
+      case set.contains(seen, item) {
+        // If we've seen it before, add it to the 'dups' set
+        True -> #(seen, set.insert(dups, item))
+        // If it's new, add it to the 'seen' set
+        False -> #(set.insert(seen, item), dups)
+      }
+    })
+
+  set.to_list(dups)
+}
+
 pub fn q7p3(words: String, rules: String) {
   let #(words, rules) = get_words_and_rules(words, rules)
+  let words = set.from_list(words)
+  let found_words =
+    set.fold(words, set.new(), fn(acc, word) {
+      case check_word(word, rules) {
+        True -> {
+          let gen_words = build_words(word, rules, 7, 11, set.new())
+          set.union(acc, gen_words)
+        }
+        False -> acc
+      }
+    })
+
+  found_words
+  |> set.size()
 }
 
 pub const words_sample_p1 = "Oronris,Urakris,Oroneth,Uraketh"
@@ -175,3 +242,59 @@ h > a,e,v
 t > h
 v > e
 y > p,t"
+
+pub const words_sample_2_p3 = "Khara,Xaryt,Noxer,Kharax"
+
+pub const rules_sample_2_p3 = "r > v,e,a,g,y
+a > e,v,x,r,g
+e > r,x,v,t
+h > a,e,v
+g > r,y
+y > p,t
+i > v,r
+K > h
+v > e
+B > r
+t > h
+N > e
+p > h
+H > e
+l > t
+z > e
+X > a
+n > v
+x > z
+T > i"
+
+pub const words_p3 = "Ny,Nyl,Nyth,Nyss,Nyrix,Urak,Aure,Zyrix,Tarl,Fyr,Pyr,Brel,Ael,Malith,Rythan,Drak,Xyr,Rylar,Dal,Karth"
+
+pub const rules_p3 = "M > a
+R > y
+r > t,i,v,e,l,r,z,d,f,k,a
+e > l,r,z,d,f,k,a,t,v
+Z > y
+U > r
+t > h
+x > r,z,d,f,k,a,t
+i > s,o,x,t
+X > y
+z > o,i
+A > u,e
+u > v
+N > y
+a > r,x,l,e,k,v,n
+k > r,a,z,d,f,k,t
+o > r,n
+d > a
+s > s,r,z,d,f,k,a,t
+f > y
+F > y
+K > a
+y > v,r,s
+T > a
+h > z,y,r,d,f,k,a,t
+D > r,a
+P > y
+l > a,r,z,d,f,k,t,i
+n > r,z,d,f,k,a,t
+B > r"

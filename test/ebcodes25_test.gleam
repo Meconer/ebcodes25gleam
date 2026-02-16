@@ -113,3 +113,13 @@ pub fn q7p2_test() {
   let res = quest7.q7p2(quest7.words_sample_p2, quest7.rules_sample_p2)
   assert res == 23
 }
+
+pub fn q7p3_test() {
+  let res = quest7.q7p3(quest7.words_sample_1_p3, quest7.rules_sample_1_p3)
+  assert res == 25
+}
+
+pub fn q7p3_2_test() {
+  let res = quest7.q7p3(quest7.words_sample_2_p3, quest7.rules_sample_2_p3)
+  assert res == 1154
+}
