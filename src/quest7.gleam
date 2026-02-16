@@ -88,9 +88,11 @@ fn build_words(
   min_length: Int,
   max_length: Int,
   word_acc: set.Set(String),
+  visited: set.Set(String),
 ) -> set.Set(String) {
   let len = string.length(word)
   use <- bool.guard(when: len > max_length, return: word_acc)
+  use <- bool.guard(when: set.contains(visited, word), return: word_acc)
   let assert Ok(last_letter) = string.last(word)
   let followers =
     dict.get(rules, last_letter)
@@ -103,7 +105,7 @@ fn build_words(
   let next_words =
     set.fold(new_words, set.new(), fn(innacc, nword) {
       set.union(
-        build_words(nword, rules, min_length, max_length, set.new()),
+        build_words(nword, rules, min_length, max_length, set.new(), visited),
         innacc,
       )
     })
@@ -139,7 +141,7 @@ pub fn q7p3(words: String, rules: String) {
     set.fold(words, set.new(), fn(acc, word) {
       case check_word(word, rules) {
         True -> {
-          let gen_words = build_words(word, rules, 7, 11, set.new())
+          let gen_words = build_words(word, rules, 7, 11, set.new(), set.new())
           set.union(acc, gen_words)
         }
         False -> acc
