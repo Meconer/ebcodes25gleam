@@ -123,3 +123,11 @@ pub fn q7p3_2_test() {
   let res = quest7.q7p3(quest7.words_sample_2_p3, quest7.rules_sample_2_p3)
   assert res == 1154
 }
+
+pub fn q7_p3_3_test() {
+  let #(words, rules) =
+    quest7.get_words_and_rules(quest7.words_sample_p2, quest7.rules_sample_p2)
+  let res =
+    quest7.solve(words, rules)
+    |> echo
+}
