@@ -158,7 +158,7 @@ pub fn q7p3(words: String, rules: String) {
 pub fn q7p3count(words: String, rules: String) {
   let #(words, rules) = get_words_and_rules(words, rules)
   let words = list.filter(words, fn(word) { check_word(word, rules) })
-  let found_shortest_words =
+  let ending_letters =
     list.fold(words, [], fn(acc, word) {
       let gen_words = build_words(word, rules, 7, 7)
       [gen_words, ..acc]
@@ -166,6 +166,13 @@ pub fn q7p3count(words: String, rules: String) {
     |> list.flatten()
     |> list.map(fn(word) { string.last(word) |> result.unwrap("") })
     |> list.unique()
+    |> echo
+  let suffixes =
+    list.fold(ending_letters, [], fn(acc, ending_letter) {
+      let suffix = build_words(ending_letter, rules, 1, 4)
+      list.append(acc, suffix)
+    })
+    // |> list.unique()
     |> echo
     |> list.length()
 }
