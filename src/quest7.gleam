@@ -163,6 +163,9 @@ pub fn q7p3count(words: String, rules: String) {
       let gen_words = build_words(word, rules, 7, 7)
       [gen_words, ..acc]
     })
+    |> list.flatten()
+    |> list.map(fn(word) { string.last(word) |> result.unwrap("") })
+    |> list.unique()
     |> echo
     |> list.length()
 }
