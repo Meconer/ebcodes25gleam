@@ -1,6 +1,5 @@
 import gleam/bool
 import gleam/dict.{type Dict}
-import gleam/int
 import gleam/list
 import gleam/option
 import gleam/result
@@ -123,63 +122,6 @@ pub type GeneratorState {
   GeneratorState(rules: Dict(String, List(String)), cache: SuffixCache)
 }
 
-fn build_suffixes(
-  char: String,
-  min: Int,
-  max: Int,
-  state: GeneratorState,
-) -> #(List(String), GeneratorState) {
-  let key = #(char, min, max)
-
-  // 1. Check the cache inside the state
-  case dict.get(state.cache, key) {
-    Ok(suffixes) -> #(suffixes, state)
-
-    Error(_) -> {
-      let followers = dict.get(state.rules, char) |> result.unwrap([])
-
-      // 2. Process all followers, threading the state through the fold
-      let #(all_suffixes, final_state) =
-        list.fold(followers, #([], state), fn(acc, follower) {
-          let #(found_so_far, current_state) = acc
-
-          // Recurse with updated requirements
-          let #(child_suffixes, next_state) =
-            build_suffixes(
-              follower,
-              int.max(0, min - 1),
-              max - 1,
-              current_state,
-            )
-
-          // Build the new strings for this branch
-          let current_branch_results = [
-            follower,
-            ..list.map(child_suffixes, fn(s) { follower <> s })
-          ]
-
-          #(list.flatten([found_so_far, current_branch_results]), next_state)
-        })
-
-      // 3. Filter for valid lengths
-      let valid_suffixes =
-        list.filter(all_suffixes, fn(s) {
-          let l = string.length(s)
-          l >= min && l <= max
-        })
-
-      // 4. Update the cache in the state and return
-      let new_state =
-        GeneratorState(
-          ..final_state,
-          cache: dict.insert(final_state.cache, key, valid_suffixes),
-        )
-
-      #(valid_suffixes, new_state)
-    }
-  }
-}
-
 pub fn find_duplicates(items: List(a)) -> List(a) {
   let #(_seen, dups) =
     list.fold(over: items, from: #(set.new(), set.new()), with: fn(acc, item) {
@@ -193,37 +135,6 @@ pub fn find_duplicates(items: List(a)) -> List(a) {
     })
 
   set.to_list(dups)
-}
-
-pub fn solve(start_words, rules) {
-  let initial_state = GeneratorState(rules: rules, cache: dict.new())
-
-  let #(all_results, _final_state) =
-    list.fold(start_words, #([], initial_state), fn(acc, word) {
-      let #(total_results, current_state) = acc
-
-      // Get the last character safely. 
-      // If the word is empty, we just skip it.
-      let last_char_result = string.last(word)
-
-      case last_char_result {
-        Ok(last) -> {
-          let #(suffixes, next_state) =
-            build_suffixes(
-              last,
-              7 - string.length(word),
-              11 - string.length(word),
-              current_state,
-            )
-
-          let full_words = list.map(suffixes, fn(s) { word <> s })
-          #(list.flatten([total_results, full_words]), next_state)
-        }
-        Error(Nil) -> #(total_results, current_state)
-      }
-    })
-    |> echo
-  // Final count of unique words logic here...
 }
 
 pub fn q7p3(words: String, rules: String) {
@@ -242,6 +153,18 @@ pub fn q7p3(words: String, rules: String) {
 
   found_words
   |> set.size()
+}
+
+pub fn q7p3count(words: String, rules: String) {
+  let #(words, rules) = get_words_and_rules(words, rules)
+  let words = list.filter(words, fn(word) { check_word(word, rules) })
+  let found_shortest_words =
+    list.fold(words, [], fn(acc, word) {
+      let gen_words = build_words(word, rules, 7, 7)
+      [gen_words, ..acc]
+    })
+    |> echo
+    |> list.length()
 }
 
 pub const words_sample_p1 = "Oronris,Urakris,Oroneth,Uraketh"
