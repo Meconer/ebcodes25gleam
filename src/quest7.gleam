@@ -158,23 +158,47 @@ pub fn q7p3(words: String, rules: String) {
 pub fn q7p3count(words: String, rules: String) {
   let #(words, rules) = get_words_and_rules(words, rules)
   let words = list.filter(words, fn(word) { check_word(word, rules) })
-  let ending_letters =
+
+  let shortest_valid_words =
     list.fold(words, [], fn(acc, word) {
       let gen_words = build_words(word, rules, 7, 7)
       [gen_words, ..acc]
     })
     |> list.flatten()
-    |> list.map(fn(word) { string.last(word) |> result.unwrap("") })
     |> list.unique()
     |> echo
-  let suffixes =
-    list.fold(ending_letters, [], fn(acc, ending_letter) {
-      let suffix = build_words(ending_letter, rules, 1, 4)
-      list.append(acc, suffix)
-    })
-    // |> list.unique()
+
+  let ending_letters =
+    shortest_valid_words
+    |> list.map(fn(word) { string.last(word) |> result.unwrap("") })
     |> echo
-    |> list.length()
+
+  let count_words =
+    list.fold(ending_letters, dict.new(), fn(acc, el) {
+      dict.upsert(acc, el, fn(opt_count) {
+        case opt_count {
+          option.Some(curr_count) -> curr_count + 1
+          option.None -> 1
+        }
+      })
+    })
+    |> echo
+
+  let suffixes =
+    ending_letters
+    |> list.unique()
+    |> list.fold([], fn(acc, ending_letter) {
+      let suffix =
+        build_words(ending_letter, rules, 1, 4)
+        |> list.map(fn(suff) { string.drop_start(suff, 1) })
+      [#(ending_letter, suffix), ..acc]
+    })
+    |> dict.from_list()
+
+  let suffix_counts =
+    dict.map_values(suffixes, fn(_k, v) { list.length(v) })
+    |> echo
+  0
 }
 
 pub const words_sample_p1 = "Oronris,Urakris,Oroneth,Uraketh"

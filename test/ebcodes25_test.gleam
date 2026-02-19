@@ -125,6 +125,6 @@ pub fn q7p3_2_test() {
 }
 
 pub fn q7p3_3_test() {
-  let res = quest7.q7p3count("Malithz", quest7.rules_p3)
+  let res = quest7.q7p3count(quest7.words_p3, quest7.rules_p3)
   assert res == 1154
 }
