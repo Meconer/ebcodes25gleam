@@ -137,28 +137,29 @@ pub fn find_duplicates(items: List(a)) -> List(a) {
   set.to_list(dups)
 }
 
-pub fn q7p3(words: String, rules: String) {
-  let #(words, rules) = get_words_and_rules(words, rules)
-  let words = set.from_list(words)
-  let found_words =
-    set.fold(words, set.new(), fn(acc, word) {
-      case check_word(word, rules) {
-        True -> {
-          let gen_words = build_words(word, rules, 7, 11)
-          set.union(acc, set.from_list(gen_words))
-        }
-        False -> acc
-      }
-    })
+// pub fn q7p3(words: String, rules: String) {
+//   let #(words, rules) = get_words_and_rules(words, rules)
+//   let words = set.from_list(words)
+//   let found_words =
+//     set.fold(words, set.new(), fn(acc, word) {
+//       case check_word(word, rules) {
+//         True -> {
+//           let gen_words = build_words(word, rules, 7, 11)
+//           set.union(acc, set.from_list(gen_words))
+//         }
+//         False -> acc
+//       }
+//     })
 
-  found_words
-  |> set.size()
-}
+//   found_words
+//   |> set.size()
+// }
 
 pub fn q7p3count(words: String, rules: String) {
   let #(words, rules) = get_words_and_rules(words, rules)
   let words = list.filter(words, fn(word) { check_word(word, rules) })
 
+  // Build all unique possible words that are 7 characters long
   let shortest_valid_words =
     list.fold(words, [], fn(acc, word) {
       let gen_words = build_words(word, rules, 7, 7)
@@ -166,14 +167,15 @@ pub fn q7p3count(words: String, rules: String) {
     })
     |> list.flatten()
     |> list.unique()
-    |> echo
 
+  // Get all unique ending letters of the shortest valid words
   let ending_letters =
     shortest_valid_words
     |> list.map(fn(word) { string.last(word) |> result.unwrap("") })
-    |> echo
 
-  let count_words =
+  // Count how many words that are ending in each letter and store
+  // the counts in a dict
+  let word_counts =
     list.fold(ending_letters, dict.new(), fn(acc, el) {
       dict.upsert(acc, el, fn(opt_count) {
         case opt_count {
@@ -182,23 +184,32 @@ pub fn q7p3count(words: String, rules: String) {
         }
       })
     })
-    |> echo
 
+  // Build all valid suffixes that starts with the ending letters
+  // and has lengths from 0 to the max length needed to get from
+  // the shortest valid to the longest valid word length
   let suffixes =
     ending_letters
     |> list.unique()
     |> list.fold([], fn(acc, ending_letter) {
       let suffix =
-        build_words(ending_letter, rules, 1, 4)
+        build_words(ending_letter, rules, 1, 5)
         |> list.map(fn(suff) { string.drop_start(suff, 1) })
       [#(ending_letter, suffix), ..acc]
     })
     |> dict.from_list()
 
-  let suffix_counts =
-    dict.map_values(suffixes, fn(_k, v) { list.length(v) })
-    |> echo
-  0
+  // Now count how many different suffixes there are for each letter
+  let suffix_counts = dict.map_values(suffixes, fn(_k, v) { list.length(v) })
+
+  // For each ending letter, multiply the word count and the suffix count
+  // and sum them to get the total number of unique valid words
+  let total_count =
+    dict.fold(word_counts, 0, fn(acc, key, word_count) {
+      let suffix_count = dict.get(suffix_counts, key) |> result.unwrap(0)
+      acc + suffix_count * word_count
+    })
+  total_count
 }
 
 pub const words_sample_p1 = "Oronris,Urakris,Oroneth,Uraketh"
