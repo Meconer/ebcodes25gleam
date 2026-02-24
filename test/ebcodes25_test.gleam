@@ -6,6 +6,7 @@ import quest4
 import quest5
 import quest6
 import quest7
+import quest8
 
 pub fn main() -> Nil {
   gleeunit.main()
@@ -104,22 +105,27 @@ pub fn main() -> Nil {
 //   assert res == 3_442_321
 // }
 
-pub fn q7p1_test() {
-  let res = quest7.q7p1(quest7.words_sample_p1, quest7.rules_sample_p1)
-  assert res == "Oroneth"
-}
+// pub fn q7p1_test() {
+//   let res = quest7.q7p1(quest7.words_sample_p1, quest7.rules_sample_p1)
+//   assert res == "Oroneth"
+// }
 
-pub fn q7p2_test() {
-  let res = quest7.q7p2(quest7.words_sample_p2, quest7.rules_sample_p2)
-  assert res == 23
-}
+// pub fn q7p2_test() {
+//   let res = quest7.q7p2(quest7.words_sample_p2, quest7.rules_sample_p2)
+//   assert res == 23
+// }
 
-pub fn q7p3_test() {
-  let res = quest7.q7p3count(quest7.words_sample_1_p3, quest7.rules_sample_1_p3)
-  assert res == 25
-}
+// pub fn q7p3_test() {
+//   let res = quest7.q7p3count(quest7.words_sample_1_p3, quest7.rules_sample_1_p3)
+//   assert res == 25
+// }
 
-pub fn q7p3_2_test() {
-  let res = quest7.q7p3count(quest7.words_sample_2_p3, quest7.rules_sample_2_p3)
-  assert res == 1154
+// pub fn q7p3_2_test() {
+//   let res = quest7.q7p3count(quest7.words_sample_2_p3, quest7.rules_sample_2_p3)
+//   assert res == 1154
+// }
+
+pub fn q8p1_test() {
+  let res = quest8.q8p1(quest8.sample_input_1)
+  assert res == 4
 }
