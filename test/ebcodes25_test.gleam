@@ -129,3 +129,13 @@ pub fn q8p1_test() {
   let res = quest8.q8p1(quest8.sample_input_1)
   assert res == 4
 }
+
+pub fn q8p2_test() {
+  let res = quest8.q8p2(quest8.sample_input_2)
+  assert res == 21
+}
+
+pub fn q8p3_test() {
+  let res = quest8.q8p3(quest8.sample_input_3)
+  assert res == 7
+}

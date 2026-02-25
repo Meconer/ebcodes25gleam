@@ -91,8 +91,8 @@ pub fn q7() -> Nil {
 pub fn q8() -> Nil {
   io.print("Q8p1: ")
   io.println(quest8.q8p1(quest8.q8_input_1) |> int.to_string)
-  // io.print("Q7p2: ")
-  // io.println(quest7.q7p2(quest7.words_p2, quest7.rules_p2) |> int.to_string())
+  io.print("Q8p2: ")
+  io.println(quest8.q8p2(quest8.q8_input_2) |> int.to_string)
   // io.print("Q7p3: ")
   // io.println(
   //   quest7.q7p3count(quest7.words_p3, quest7.rules_p3) |> int.to_string(),
