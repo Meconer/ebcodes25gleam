@@ -5,6 +5,7 @@ import gleam/string
 import q5_inputs
 import quest6
 import quest7
+import quest8
 import simplifile
 
 // import quest1
@@ -87,7 +88,19 @@ pub fn q7() -> Nil {
   Nil
 }
 
+pub fn q8() -> Nil {
+  io.print("Q8p1: ")
+  io.println(quest8.q8p1(quest8.q8_input_1) |> int.to_string)
+  // io.print("Q7p2: ")
+  // io.println(quest7.q7p2(quest7.words_p2, quest7.rules_p2) |> int.to_string())
+  // io.print("Q7p3: ")
+  // io.println(
+  //   quest7.q7p3count(quest7.words_p3, quest7.rules_p3) |> int.to_string(),
+  // )
+  Nil
+}
+
 pub fn main() -> Nil {
-  q7()
+  q8()
   Nil
 }
