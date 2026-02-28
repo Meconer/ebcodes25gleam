@@ -114,27 +114,28 @@ pub fn q9p2(inp: String) {
       #(number, dna)
     })
     |> dict.from_list()
-    |> echo
-  let duck_list = list.range(1, dict.size(dragon_ducks))
-  let parents = get_parents(duck_list, dragon_ducks, []) |> echo
+  let duck_idx_list = list.range(1, dict.size(dragon_ducks))
+  let parents = get_parents(duck_idx_list, dragon_ducks) |> echo
   0
 }
 
 fn get_parents(
-  duck_list: List(Int),
+  duck_idx_list: List(Int),
   dragon_ducks: dict.Dict(Int, List(String)),
-  acc: List(Int),
 ) {
-  list.fold(duck_list, [], fn(innacc, child_idx) {
-    let possible_parents = list.filter(duck_list, fn(i) { i != child_idx })
+  list.fold(duck_idx_list, [], fn(acc, child_idx) {
+    let possible_parents = list.filter(duck_idx_list, fn(i) { i != child_idx })
     let parent_combos = list.combination_pairs(possible_parents)
-    list.map(parent_combos, fn(parents) {
-      let #(p1, p2) = parents
-      case is_valid_child_parents_combo(child_idx, [p1, p2], dragon_ducks) {
-        True -> option.Some(#(child_idx, [p1, p1]))
-        False -> option.None
-      }
-    })
+    let combos =
+      list.fold(parent_combos, [], fn(acc, parents) {
+        let #(p1, p2) = parents
+        case is_valid_child_parents_combo(child_idx, [p1, p2], dragon_ducks) {
+          True -> [#(child_idx, [p1, p2]), ..acc]
+          False -> acc
+        }
+      })
+      |> echo
+    [combos, ..acc]
   })
 }
 
