@@ -1,5 +1,6 @@
 import gleam/dict
 import gleam/list.{Continue, Stop}
+import gleam/option
 import gleam/result
 import gleam/string
 import utils
@@ -92,10 +93,10 @@ fn dna_check(
 
 fn get_child(dragon_ducks: dict.Dict(Int, List(String))) -> Int {
   list.range(1, 3)
-  |> list.fold_until(0, fn(_acc, child_idx) {
+  |> list.fold_until(0, fn(acc, child_idx) {
     case is_valid_child(child_idx, dragon_ducks) {
       True -> Stop(child_idx)
-      False -> Continue(child_idx)
+      False -> Continue(acc)
     }
   })
 }
@@ -113,8 +114,41 @@ pub fn q9p2(inp: String) {
       #(number, dna)
     })
     |> dict.from_list()
-  let child = get_child(dragon_ducks)
-  calc_result(dragon_ducks, child)
+    |> echo
+  let duck_list = list.range(1, dict.size(dragon_ducks))
+  let parents = get_parents(duck_list, dragon_ducks, []) |> echo
+  0
+}
+
+fn get_parents(
+  duck_list: List(Int),
+  dragon_ducks: dict.Dict(Int, List(String)),
+  acc: List(Int),
+) {
+  list.fold(duck_list, [], fn(innacc, child_idx) {
+    let possible_parents = list.filter(duck_list, fn(i) { i != child_idx })
+    let parent_combos = list.combination_pairs(possible_parents)
+    list.map(parent_combos, fn(parents) {
+      let #(p1, p2) = parents
+      case is_valid_child_parents_combo(child_idx, [p1, p2], dragon_ducks) {
+        True -> option.Some(#(child_idx, [p1, p1]))
+        False -> option.None
+      }
+    })
+  })
+}
+
+fn is_valid_child_parents_combo(
+  child_idx: Int,
+  parents: List(Int),
+  dragon_ducks: dict.Dict(Int, List(String)),
+) -> Bool {
+  let child_dna = dict.get(dragon_ducks, child_idx) |> result.unwrap([])
+  let parents_dna =
+    list.map(parents, fn(parent) {
+      dict.get(dragon_ducks, parent) |> result.unwrap([])
+    })
+  rec_check_parents_and_childs(child_dna, parents_dna)
 }
 
 pub const sample_input_1 = "1:CAAGCGCTAAGTTCGCTGGATGTGTGCCCGCG
