@@ -150,3 +150,8 @@ pub fn q9p2_test() {
   let res = quest9.q9p2(quest9.sample_input_2)
   assert res == 1245
 }
+
+pub fn q9p3_test() {
+  let res = quest9.q9p3(quest9.sample_input_2)
+  assert res == 12
+}

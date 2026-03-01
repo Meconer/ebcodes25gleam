@@ -19,10 +19,10 @@ pub fn q9p1(inp: String) {
     })
     |> dict.from_list()
   let child = get_child(dragon_ducks)
-  calc_result(dragon_ducks, child)
+  calc_result_p1(dragon_ducks, child)
 }
 
-fn calc_result(dragon_ducks: dict.Dict(Int, List(String)), child_idx: Int) {
+fn calc_result_p1(dragon_ducks: dict.Dict(Int, List(String)), child_idx: Int) {
   let parents = parent_list(child_idx)
   let child_dna = dict.get(dragon_ducks, child_idx) |> result.unwrap([])
   let parent_matches =
@@ -101,6 +101,26 @@ fn get_child(dragon_ducks: dict.Dict(Int, List(String))) -> Int {
   })
 }
 
+fn calc_result_p2(
+  dragon_ducks: dict.Dict(Int, List(String)),
+  parent_idxs: List(Int),
+  child_idx: Int,
+) {
+  let child_dna = dict.get(dragon_ducks, child_idx) |> result.unwrap([])
+  let parent_matches =
+    list.map(parent_idxs, fn(parent_idx) {
+      let parent_dna = dict.get(dragon_ducks, parent_idx) |> result.unwrap([])
+      list.map2(child_dna, parent_dna, fn(c, p) {
+        case c == p {
+          True -> 1
+          False -> 0
+        }
+      })
+      |> list.count(fn(match) { match == 1 })
+    })
+  list.fold(parent_matches, 1, fn(acc, mc) { acc * mc })
+}
+
 pub fn q9p2(inp: String) {
   let dragon_ducks =
     inp
@@ -115,8 +135,13 @@ pub fn q9p2(inp: String) {
     })
     |> dict.from_list()
   let duck_idx_list = list.range(1, dict.size(dragon_ducks))
-  let parents = get_parents(duck_idx_list, dragon_ducks) |> echo
-  0
+  get_parents(duck_idx_list, dragon_ducks)
+  |> list.flatten()
+  |> list.map(fn(combo) {
+    let #(child, parents) = combo
+    calc_result_p2(dragon_ducks, parents, child)
+  })
+  |> list.fold(0, fn(acc, el) { acc + el })
 }
 
 fn get_parents(
@@ -134,7 +159,6 @@ fn get_parents(
           False -> acc
         }
       })
-      |> echo
     [combos, ..acc]
   })
 }
@@ -150,6 +174,26 @@ fn is_valid_child_parents_combo(
       dict.get(dragon_ducks, parent) |> result.unwrap([])
     })
   rec_check_parents_and_childs(child_dna, parents_dna)
+}
+
+pub fn q9p3(inp: String) {
+  let dragon_ducks =
+    inp
+    |> string.split("\n")
+    |> list.map(fn(line) {
+      let parts = string.split(line, ":")
+      let number =
+        utils.unsafe_list_first(parts)
+        |> utils.unsafe_int_parse()
+      let dna = utils.unsafe_list_last(parts) |> string.to_graphemes()
+      #(number, dna)
+    })
+    |> dict.from_list()
+  let duck_idx_list = list.range(1, dict.size(dragon_ducks))
+  get_parents(duck_idx_list, dragon_ducks)
+  |> list.flatten()
+  |> echo
+  0
 }
 
 pub const sample_input_1 = "1:CAAGCGCTAAGTTCGCTGGATGTGTGCCCGCG
