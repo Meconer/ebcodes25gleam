@@ -1,4 +1,5 @@
 import gleam/dict
+import gleam/int
 import gleam/list.{Continue, Stop}
 import gleam/option
 import gleam/result
@@ -199,10 +200,17 @@ pub fn q9p3(inp: String) {
       let family_set = set.from_list(pl)
       set.insert(family_set, child)
     })
-  let families =
-    combine(cp_combos, [])
-    |> echo
-  0
+  combine(cp_combos, [])
+  |> list.sort(by: fn(a, b) { int.compare(set.size(b), set.size(a)) })
+  |> echo
+  |> list.first()
+  |> result.unwrap(set.new())
+  |> echo
+  |> calc_result_p3()
+}
+
+fn calc_result_p3(family: set.Set(Int)) {
+  set.fold(family, 0, fn(acc, num) { acc + num })
 }
 
 fn get_families(f1: set.Set(Int), f_list: List(set.Set(Int))) {
@@ -239,6 +247,15 @@ pub const sample_input_2 = "1:GCAGGCGAGTATGATACCCGGCTAGCCACCCC
 5:GCAGCTTAGTATGACCGCCAAATCGCGACTCA
 6:AGTGGAACCTTGGATAGTCTCATATAGCGGCA
 7:GGCGTAATAATCGGATGCTGCAGAGGCTGCTG"
+
+pub const sample_input_3 = "1:GCAGGCGAGTATGATACCCGGCTAGCCACCCC
+2:TCTCGCGAGGATATTACTGGGCCAGACCCCCC
+3:GGTGGAACATTCGAAAGTTGCATAGGGTGGTG
+4:GCTCGCGAGTATATTACCGAACCAGCCCCTCA
+5:GCAGCTTAGTATGACCGCCAAATCGCGACTCA
+6:AGTGGAACCTTGGATAGTCTCATATAGCGGCA
+7:GGCGTAATAATCGGATGCTGCAGAGGCTGCTG
+8:GGCGTAAAGTATGGATGCTGGCTAGGCACCCG"
 
 pub const q9_input_1 = "1:TTAGCGCTTCGGGAGATTTAGCACAAAAAATCTTCCCATCAGCCCAATAAGTGTGGCGGTAGGACGAATCTAAGATAGCTCATTCCACGTTTTGGGTAAGACAATTGCTCTTCGCTGGGGCATAGTCT
 2:ACACTGGACAGATATGCTGGCAGCTGTGCTGTAAGTGGGGGCCCTATCCTACTCTCCAAACAGGATGCGGATTGCCACCTGTCCTTCCTTAGCTGGAACACAGTAGAGCGTTAAGATTACGCGGTAAA
