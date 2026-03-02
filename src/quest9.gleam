@@ -2,6 +2,7 @@ import gleam/dict
 import gleam/list.{Continue, Stop}
 import gleam/option
 import gleam/result
+import gleam/set
 import gleam/string
 import utils
 
@@ -190,10 +191,41 @@ pub fn q9p3(inp: String) {
     })
     |> dict.from_list()
   let duck_idx_list = list.range(1, dict.size(dragon_ducks))
-  get_parents(duck_idx_list, dragon_ducks)
-  |> list.flatten()
-  |> echo
+  let cp_combos =
+    get_parents(duck_idx_list, dragon_ducks)
+    |> list.flatten()
+    |> list.map(fn(cp) {
+      let #(child, pl) = cp
+      let family_set = set.from_list(pl)
+      set.insert(family_set, child)
+    })
+  let families =
+    combine(cp_combos, [])
+    |> echo
   0
+}
+
+fn get_families(f1: set.Set(Int), f_list: List(set.Set(Int))) {
+  list.fold(f_list, #(f1, []), fn(acc, f) {
+    let #(f_acc, not_conn) = acc
+    case set.is_disjoint(f_acc, f) {
+      False -> #(set.union(f_acc, f), not_conn)
+      True -> #(f_acc, [f, ..not_conn])
+    }
+  })
+}
+
+fn combine(
+  cp_combos: List(set.Set(Int)),
+  acc: List(set.Set(Int)),
+) -> List(set.Set(Int)) {
+  case cp_combos {
+    [] -> acc
+    [f1, ..rest] -> {
+      let #(f1_set, unconnecteds) = get_families(f1, rest)
+      combine(unconnecteds, [f1_set, ..acc])
+    }
+  }
 }
 
 pub const sample_input_1 = "1:CAAGCGCTAAGTTCGCTGGATGTGTGCCCGCG
