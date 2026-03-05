@@ -141,22 +141,29 @@ pub fn main() -> Nil {
 //   assert res == 7
 // }
 
-pub fn q9p1_test() {
-  let res = quest9.q9p1(quest9.sample_input_1)
-  assert res == 414
-}
+// pub fn q9p1_test() {
+//   let res = quest9.q9p1(quest9.sample_input_1)
+//   assert res == 414
+// }
 
-pub fn q9p2_test() {
-  let res = quest9.q9p2(quest9.sample_input_2)
-  assert res == 1245
-}
+// pub fn q9p2_test() {
+//   let res = quest9.q9p2(quest9.sample_input_2)
+//   assert res == 1245
+// }
 
-pub fn q9p3_test() {
-  let res = quest9.q9p3(quest9.sample_input_2)
-  assert res == 12
-}
+// pub fn q9p3_test() {
+//   let res = quest9.q9p3(quest9.sample_input_2)
+//   assert res == 12
+// }
 
-pub fn q9p3_2_test() {
-  let res = quest9.q9p3(quest9.sample_input_3)
-  assert res == 36
+// pub fn q9p3_2_test() {
+//   let res = quest9.q9p3(quest9.sample_input_3)
+//   assert res == 36
+// }
+
+import quest10
+
+pub fn q10p1_test() {
+  let res = quest10.q10p1(quest10.sample_input_1, 3)
+  assert res == 27
 }
