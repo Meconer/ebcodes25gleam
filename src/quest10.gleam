@@ -3,9 +3,45 @@ import gleam/set
 import gleam/string
 
 pub fn q10p1(inp: String, no_of_steps: Int) -> Int {
-  parse_input(inp)
-  |> echo
+  let #(sheep, dragon_row, dragon_col) =
+    parse_input(inp)
+    |> echo
+  let start_point = #(dragon_row, dragon_col)
+  let reachable_points =
+    get_reachable_points(set.from_list([start_point]), no_of_steps)
+  let reachable_sheep =
+    set.intersection(sheep, reachable_points)
+    |> echo
   0
+}
+
+fn get_reachable_points(reachables: set.Set(#(Int, Int)), no_of_steps: Int) {
+  case no_of_steps {
+    0 -> reachables
+    _ -> {
+      let deltas = [
+        #(1, 2),
+        #(2, 1),
+        #(-1, 2),
+        #(-2, 1),
+        #(1, -2),
+        #(2, -1),
+        #(-2, -1),
+        #(-1, -2),
+      ]
+      let new_r =
+        set.fold(reachables, reachables, fn(acc, point) {
+          let #(r, c) = point
+          let new_points =
+            list.map(deltas, fn(delta) {
+              let #(dr, dc) = delta
+              #(r + dr, c + dc)
+            })
+          set.union(acc, set.from_list(new_points))
+        })
+      get_reachable_points(new_r, no_of_steps - 1)
+    }
+  }
 }
 
 fn parse_input(inp: String) {
