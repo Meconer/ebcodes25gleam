@@ -114,8 +114,8 @@ import quest10
 pub fn q10() -> Nil {
   io.print("Q10p1: ")
   io.println(quest10.q10p1(quest10.q10_input_1, 4) |> int.to_string)
-  // io.print("Q9p2: ")
-  // io.println(quest9.q9p2(quest9.q9_input_2) |> int.to_string)
+  io.print("Q10p2: ")
+  io.println(quest10.q10p2(quest10.q10_input_2, 20) |> int.to_string)
   // io.print("Q9p3: ")
   // io.println(quest9.q9p3(quest9.q9_input_3) |> int.to_string())
   Nil

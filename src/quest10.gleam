@@ -13,10 +13,10 @@ pub fn q10p1(inp: String, no_of_steps: Int) -> Int {
 
 pub fn q10p2(inp: String, no_of_rounds: Int) -> Int {
   let #(sheep, dragon_row, dragon_col, hiding_spots) = parse_input(inp)
+  let lines = string.split(inp, "\n")
+  let max_row = list.length(lines)
   let dragon_positions = set.from_list([#(dragon_row, dragon_col)])
-  let eaten_sheeps =
-    do_round(sheep, dragon_positions, hiding_spots, no_of_rounds, 0)
-  0
+  do_round(sheep, dragon_positions, hiding_spots, no_of_rounds, max_row, 0)
 }
 
 fn do_round(
@@ -24,6 +24,7 @@ fn do_round(
   dragon_positions: set.Set(#(Int, Int)),
   hiding_spots: set.Set(#(Int, Int)),
   no_of_rounds: Int,
+  max_row: Int,
   no_of_eaten_sheep: Int,
 ) {
   case no_of_rounds {
@@ -32,16 +33,29 @@ fn do_round(
       // Move the dragons
       let dragon_positions = do_dragon_move(dragon_positions)
       // Eat the sheep at the dragon positions if it is not a hiding spot
-      let #(sheep, eat_count) =
-        eat_sheep(dragon_positions, sheep, hiding_spots) |> echo
-      let sheep = do_sheep_move(sheep)
-      0
+      let #(sheep, eat_count1) =
+        eat_sheep(dragon_positions, sheep, hiding_spots)
+      let sheep = do_sheep_move(sheep, max_row)
+      let #(sheep, eat_count2) =
+        eat_sheep(dragon_positions, sheep, hiding_spots)
+      do_round(
+        sheep,
+        dragon_positions,
+        hiding_spots,
+        no_of_rounds - 1,
+        max_row,
+        no_of_eaten_sheep + eat_count1 + eat_count2,
+      )
     }
   }
 }
 
-fn do_sheep_move(sheep: set.Set(#(Int, Int))) -> a {
-  todo
+fn do_sheep_move(sheep: set.Set(#(Int, Int)), max_row: Int) {
+  set.map(sheep, fn(s) {
+    let #(row, col) = s
+    #(row + 1, col)
+  })
+  |> set.filter(fn(s) { s.0 <= max_row })
 }
 
 fn eat_sheep(
