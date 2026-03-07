@@ -24,16 +24,24 @@ fn do_round(
   dragon_positions: set.Set(#(Int, Int)),
   hiding_spots: set.Set(#(Int, Int)),
   no_of_rounds: Int,
-  no_eaten_sheep: Int,
+  no_of_eaten_sheep: Int,
 ) {
   case no_of_rounds {
-    0 -> no_eaten_sheep
+    0 -> no_of_eaten_sheep
     _ -> {
+      // Move the dragons
       let dragon_positions = do_dragon_move(dragon_positions)
-      let sheep = eat_sheep(dragon_positions, sheep, hiding_spots)
+      // Eat the sheep at the dragon positions if it is not a hiding spot
+      let #(sheep, eat_count) =
+        eat_sheep(dragon_positions, sheep, hiding_spots) |> echo
+      let sheep = do_sheep_move(sheep)
       0
     }
   }
+}
+
+fn do_sheep_move(sheep: set.Set(#(Int, Int))) -> a {
+  todo
 }
 
 fn eat_sheep(
@@ -43,8 +51,9 @@ fn eat_sheep(
 ) {
   // Positions where a dragon could eat a sheep
   let eat_positions = set.difference(dragon_positions, hiding_spots)
-  // let eaten_sheep = set.
-  todo
+  let not_eaten_sheep = set.difference(sheep, eat_positions)
+  let eaten_count = set.size(sheep) - set.size(not_eaten_sheep)
+  #(not_eaten_sheep, eaten_count)
 }
 
 const deltas = [
