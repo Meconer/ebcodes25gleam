@@ -167,3 +167,8 @@ pub fn q10p1_test() {
   let res = quest10.q10p1(quest10.sample_input_1, 3)
   assert res == 27
 }
+
+pub fn q10p2_test() {
+  let res = quest10.q10p2(quest10.sample_input_2, 3)
+  assert res == 27
+}
