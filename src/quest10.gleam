@@ -1,3 +1,4 @@
+import gleam/dict
 import gleam/list
 import gleam/set
 import gleam/string
@@ -112,7 +113,9 @@ fn do_dragon_move(dragon_positions: set.Set(#(Int, Int))) {
   })
 }
 
-fn parse_input(inp: String) {
+fn parse_input(
+  inp: String,
+) -> #(set.Set(#(Int, Int)), Int, Int, set.Set(#(Int, Int))) {
   let #(sheep, dragon_row, dragon_col, hiding_spots) =
     inp
     |> string.split("\n")
@@ -149,6 +152,40 @@ fn parse_input(inp: String) {
   )
 }
 
+type Turn {
+  Sheep
+  Dragon
+}
+
+type State {
+  State(sheep: set.Set(#(Int, Int)), dragon_pos: #(Int, Int), turn: Turn)
+}
+
+pub fn q10p3(inp: String) {
+  let #(sheep, dr, dc, hiding_spots) = parse_input(inp)
+  let state =
+    State(sheep: sheep, dragon_pos: #(dr, dc), turn: Sheep)
+    |> echo
+  do_p3_round(state, dict.new(), 0)
+  0
+}
+
+fn do_p3_round(state: State, cache: dict.Dict(State, Int), count: Int) {
+  case dict.has_key(cache, state) {
+    True -> dict.get(cache, state)
+    False -> {
+      case state.turn {
+        Sheep -> {
+          let new_sheep = set.fold(state.sheep, set.new(), fn(acc, sh) { todo })
+        }
+        Dragon -> {
+          todo
+        }
+      }
+    }
+  }
+}
+
 pub const sample_input_1 = "...SSS.......
 .S......S.SS.
 ..S....S...S.
@@ -176,6 +213,11 @@ S.S..S..S###.
 ..#.##...S##.
 .#...#.S#...S
 SS...#.S.#S.."
+
+pub const sample_input_3 = "SSS
+..#
+#.#
+#D."
 
 pub const q10_input_1 = ".SSSSS.SSSSSS.SS.S.SS
 S.SS.SSSS.SSS.SS.S.SS
