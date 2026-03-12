@@ -185,22 +185,40 @@ pub fn q10p3(inp: String) {
 }
 
 fn do_dragon_round_p3(state: State, board: Board) {
+  let #(dragon_row, dragon_col) = state.dragon_pos
   let neighbours =
     dragon_deltas
     |> list.map(fn(delta) {
-      #(state.dragon_pos.0 + delta.0, state.dragon_pos.1 + delta.1)
+      let #(dr, dc) = delta
+      #(dragon_row + dr, dragon_col + dc)
     })
     |> list.filter(fn(pos) {
       let #(r, c) = pos
-      r >= 0 && r < board.width && c >= 0 && c < board.height
+      r >= 0 && r < board.height && c >= 0 && c < board.width
     })
+    |> echo
+  let #(eat_count, remaining_sheep) =
+    list.fold(neighbours, #(0, state.sheep), fn(acc, neighbour) {
+      let #(cnt, sheep_set) = acc
+      case set.contains(sheep_set, neighbour) {
+        True -> #(cnt + 1, set.delete(sheep_set, neighbour))
+        False -> #(cnt, sheep_set)
+      }
+      eat_count
+      + do_p3_round(State(
+        sheep: remaining_sheep,
+        dragon_pos: neighbour,
+        turn: Sheep,
+      ))
+    })
+    |> echo
   0
 }
 
 fn do_p3_round(state: State, board: Board) {
   case state.turn {
     Sheep -> {
-      todo
+      0
       // do_sheep_round_p3(state)
     }
     Dragon -> {
