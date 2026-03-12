@@ -1,10 +1,10 @@
-import gleam/dict
 import gleam/list
+import gleam/result
 import gleam/set
 import gleam/string
 
 pub fn q10p1(inp: String, no_of_steps: Int) -> Int {
-  let #(sheep, dragon_row, dragon_col, _) = parse_input(inp)
+  let #(sheep, dragon_row, dragon_col, _, _, _) = parse_input(inp)
   let start_point = #(dragon_row, dragon_col)
   let reachable_points =
     get_reachable_points(set.from_list([start_point]), no_of_steps)
@@ -13,7 +13,7 @@ pub fn q10p1(inp: String, no_of_steps: Int) -> Int {
 }
 
 pub fn q10p2(inp: String, no_of_rounds: Int) -> Int {
-  let #(sheep, dragon_row, dragon_col, hiding_spots) = parse_input(inp)
+  let #(sheep, dragon_row, dragon_col, hiding_spots, _, _) = parse_input(inp)
   let lines = string.split(inp, "\n")
   let max_row = list.length(lines)
   let dragon_positions = set.from_list([#(dragon_row, dragon_col)])
@@ -71,7 +71,7 @@ fn eat_sheep(
   #(not_eaten_sheep, eaten_count)
 }
 
-const deltas = [
+const dragon_deltas = [
   #(1, 2),
   #(2, 1),
   #(-1, 2),
@@ -90,7 +90,7 @@ fn get_reachable_points(reachables: set.Set(#(Int, Int)), no_of_steps: Int) {
         set.fold(reachables, reachables, fn(acc, point) {
           let #(r, c) = point
           let new_points =
-            list.map(deltas, fn(delta) {
+            list.map(dragon_deltas, fn(delta) {
               let #(dr, dc) = delta
               #(r + dr, c + dc)
             })
@@ -105,7 +105,7 @@ fn do_dragon_move(dragon_positions: set.Set(#(Int, Int))) {
   set.fold(dragon_positions, set.new(), fn(acc, point) {
     let #(r, c) = point
     let new_points =
-      list.map(deltas, fn(delta) {
+      list.map(dragon_deltas, fn(delta) {
         let #(dr, dc) = delta
         #(r + dr, c + dc)
       })
@@ -115,7 +115,14 @@ fn do_dragon_move(dragon_positions: set.Set(#(Int, Int))) {
 
 fn parse_input(
   inp: String,
-) -> #(set.Set(#(Int, Int)), Int, Int, set.Set(#(Int, Int))) {
+) -> #(set.Set(#(Int, Int)), Int, Int, set.Set(#(Int, Int)), Int, Int) {
+  let height = inp |> string.split("\n") |> list.length()
+  let width =
+    inp
+    |> string.split("\n")
+    |> list.first()
+    |> result.unwrap("")
+    |> string.length()
   let #(sheep, dragon_row, dragon_col, hiding_spots) =
     inp
     |> string.split("\n")
@@ -149,7 +156,13 @@ fn parse_input(
     dragon_row,
     dragon_col,
     hiding_spots |> set.from_list(),
+    width,
+    height,
   )
+}
+
+type Board {
+  Board(width: Int, height: Int)
 }
 
 type Turn {
@@ -162,26 +175,36 @@ type State {
 }
 
 pub fn q10p3(inp: String) {
-  let #(sheep, dr, dc, hiding_spots) = parse_input(inp)
+  let #(sheep, dr, dc, hiding_spots, width, height) = parse_input(inp)
+  let board = Board(width, height)
   let state =
     State(sheep: sheep, dragon_pos: #(dr, dc), turn: Sheep)
     |> echo
-  do_p3_round(state, dict.new(), 0)
+  do_p3_round(state, board)
   0
 }
 
-fn do_p3_round(state: State, cache: dict.Dict(State, Int), count: Int) {
-  case dict.has_key(cache, state) {
-    True -> dict.get(cache, state)
-    False -> {
-      case state.turn {
-        Sheep -> {
-          let new_sheep = set.fold(state.sheep, set.new(), fn(acc, sh) { todo })
-        }
-        Dragon -> {
-          todo
-        }
-      }
+fn do_dragon_round_p3(state: State, board: Board) {
+  let neighbours =
+    dragon_deltas
+    |> list.map(fn(delta) {
+      #(state.dragon_pos.0 + delta.0, state.dragon_pos.1 + delta.1)
+    })
+    |> list.filter(fn(pos) {
+      let #(r, c) = pos
+      r >= 0 && r < board.width && c >= 0 && c < board.height
+    })
+  0
+}
+
+fn do_p3_round(state: State, board: Board) {
+  case state.turn {
+    Sheep -> {
+      todo
+      // do_sheep_round_p3(state)
+    }
+    Dragon -> {
+      do_dragon_round_p3(state, board)
     }
   }
 }
