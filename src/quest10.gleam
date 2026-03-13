@@ -181,7 +181,10 @@ pub fn q10p3(inp: String) {
     State(sheep: sheep, dragon_pos: #(dr, dc), turn: Sheep)
     |> echo
   do_p3_round(state, board)
-  0
+}
+
+fn do_sheep_round_p3(state: State, board: Board) {
+  #(5, set.new())
 }
 
 fn do_dragon_round_p3(state: State, board: Board) {
@@ -201,28 +204,41 @@ fn do_dragon_round_p3(state: State, board: Board) {
     list.fold(neighbours, #(0, state.sheep), fn(acc, neighbour) {
       let #(cnt, sheep_set) = acc
       case set.contains(sheep_set, neighbour) {
-        True -> #(cnt + 1, set.delete(sheep_set, neighbour))
-        False -> #(cnt, sheep_set)
+        True -> {
+          // We found a sheep. Eat it
+          let cnt = cnt + 1
+          let sheep_set = set.delete(sheep_set, neighbour)
+          case set.is_empty(sheep_set) {
+            True ->
+              // Last sheep is eaten, return the count
+              #(cnt, sheep_set)
+            False ->
+              // There are sheep left so we recurse
+              do_dragon_round_p3(
+                State(sheep: sheep_set, dragon_pos: neighbour, turn: Sheep),
+                board,
+              )
+          }
+        }
+        False -> {
+          // No sheep on this neighbor so we continue
+          do_dragon_round_p3(
+            State(sheep: sheep_set, dragon_pos: neighbour, turn: Sheep),
+            board,
+          )
+        }
       }
-      eat_count
-      + do_p3_round(State(
-        sheep: remaining_sheep,
-        dragon_pos: neighbour,
-        turn: Sheep,
-      ))
     })
     |> echo
-  0
 }
 
 fn do_p3_round(state: State, board: Board) {
   case state.turn {
     Sheep -> {
-      0
-      // do_sheep_round_p3(state)
+      do_sheep_round_p3(state, board).0
     }
     Dragon -> {
-      do_dragon_round_p3(state, board)
+      do_dragon_round_p3(state, board).0
     }
   }
 }
