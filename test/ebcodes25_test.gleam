@@ -177,3 +177,8 @@ pub fn q10p3_test() {
   let res = quest10.q10p3(quest10.sample_input_3)
   assert res == 15
 }
+
+pub fn q10p3_2_test() {
+  let res = quest10.q10p3(quest10.sample_input_4)
+  assert res == 8
+}
