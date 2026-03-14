@@ -201,7 +201,7 @@ fn do_sheep_round_p3(
             && !set.contains(board.hiding_spots, #(new_r, c))
           {
             True ->
-              // Sheep cannot move to dragon pos. Return 0 
+              // Sheep cannot move to dragon pos when it is not a hideout. Return 0 
               acc
             False ->
               case new_r >= board.height {
@@ -287,9 +287,9 @@ fn do_dragon_round_p3(
               let #(curr_cnt, curr_cache) = acc
               let curr_state =
                 State(sheep: state.sheep, dragon_pos: neighbour, turn: Sheep)
-              let #(sub_cnt, new_cache) = do_p3_round(curr_state, board, cache)
-              let new_cache = dict.insert(curr_cache, curr_state, sub_cnt)
-              #(curr_cnt + sub_cnt, new_cache)
+              let #(sub_cnt, sub_cache) =
+                do_p3_round(curr_state, board, curr_cache)
+              #(curr_cnt + sub_cnt, sub_cache)
             }
           }
         })
