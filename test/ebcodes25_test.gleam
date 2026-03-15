@@ -182,3 +182,18 @@ pub fn q10p3_2_test() {
   let res = quest10.q10p3(quest10.sample_input_4)
   assert res == 8
 }
+
+pub fn q10p3_3_test() {
+  let res = quest10.q10p3(quest10.sample_input_5)
+  assert res == 44
+}
+
+pub fn q10p3_4_test() {
+  let res = quest10.q10p3(quest10.sample_input_6)
+  assert res == 4406
+}
+
+pub fn q10p3_5_test() {
+  let res = quest10.q10p3(quest10.sample_input_7)
+  assert res == 13_033_988_838
+}

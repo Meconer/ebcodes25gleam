@@ -116,8 +116,8 @@ pub fn q10() -> Nil {
   io.println(quest10.q10p1(quest10.q10_input_1, 4) |> int.to_string)
   io.print("Q10p2: ")
   io.println(quest10.q10p2(quest10.q10_input_2, 20) |> int.to_string)
-  // io.print("Q9p3: ")
-  // io.println(quest9.q9p3(quest9.q9_input_3) |> int.to_string())
+  io.print("Q10p3: ")
+  io.println(quest10.q10p3(quest10.q10_input_3) |> int.to_string())
   Nil
 }
 

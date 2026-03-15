@@ -164,7 +164,12 @@ fn parse_input(
 }
 
 type Board {
-  Board(width: Int, height: Int, hiding_spots: set.Set(#(Int, Int)))
+  Board(
+    width: Int,
+    height: Int,
+    hiding_spots: set.Set(#(Int, Int)),
+    escape_spots: set.Set(#(Int, Int)),
+  )
 }
 
 pub type Turn {
@@ -179,19 +184,70 @@ pub type State {
 fn sheep_set_to_state(sheep_set: set.Set(#(Int, Int))) {
   set.fold(sheep_set, [], fn(acc, sh) {
     let #(r, c) = sh
-    [#(c, r), ..acc]
+    [#(r, c), ..acc]
   })
   |> list.sort(fn(el1, el2) {
-    let #(c1, _) = el1
-    let #(c2, _) = el2
+    let #(_, c1) = el1
+    let #(_, c2) = el2
     int.compare(c1, c2)
   })
 }
 
+fn rec_find_esc_r(
+  hiding_spots: set.Set(#(Int, Int)),
+  acc_esc_spots: List(#(Int, Int)),
+  width: Int,
+  height: Int,
+  row: Int,
+) -> set.Set(#(Int, Int)) {
+  let last_row = height - 1
+  case row {
+    -1 ->
+      // We are above the board. Return the escape spots
+      set.from_list(acc_esc_spots)
+    row if row == last_row -> {
+      // First case, we are on the last row so all hiding spots here are escape spots
+      // Loop over the columns
+      let esc_spots =
+        list.range(0, width - 1)
+        |> list.fold([], fn(acc, col) {
+          case set.contains(hiding_spots, #(row, col)) {
+            True -> [#(row, col), ..acc]
+            False -> acc
+          }
+        })
+      rec_find_esc_r(hiding_spots, esc_spots, width, height, row - 1)
+    }
+    r -> {
+      // We are above the last row. If the spot below this is an escape spot and this is a hiding_spot then
+      // this will also be an escape spot
+      let esc_spots =
+        list.range(0, width - 1)
+        |> list.fold(acc_esc_spots, fn(acc, col) {
+          case list.any(acc_esc_spots, fn(spot) { spot == #(r, col) }) {
+            True -> [#(row, col), ..acc]
+            False -> acc
+          }
+        })
+      rec_find_esc_r(hiding_spots, esc_spots, width, height, r - 1)
+    }
+  }
+}
+
+fn find_escape_spots(
+  hiding_spots: set.Set(#(Int, Int)),
+  width: Int,
+  height: Int,
+) -> set.Set(#(Int, Int)) {
+  rec_find_esc_r(hiding_spots, [], width, height, height - 1)
+}
+
 pub fn q10p3(inp: String) {
   let #(sheep, dr, dc, hiding_spots, width, height) = parse_input(inp)
-  let board = Board(width, height, hiding_spots)
-  let sheep_state = sheep_set_to_state(sheep) |> echo
+  let escape_spots = find_escape_spots(hiding_spots, width, height)
+  let hiding_spots = set.difference(hiding_spots, escape_spots)
+  let board = Board(width, height, hiding_spots, escape_spots)
+  let sheep_state = sheep_set_to_state(sheep)
   let state = State(sheep: sheep_state, dragon_pos: #(dr, dc), turn: Sheep)
   let #(cnt, _cache) = do_p3_round(state, board, dict.new())
   cnt
@@ -218,21 +274,22 @@ fn do_sheep_round_p3(
               // Sheep cannot move to dragon pos when it is not a hideout. Return 0 
               acc
             False ->
-              case new_r >= board.height {
+              case
+                new_r >= board.height
+                || set.contains(board.escape_spots, #(new_r, c))
+              {
                 True ->
                   // Sheep is leaving the board. Also return 0
                   #(cnt, True, inn_cache)
                 False -> {
                   // Sheep was able to move
-                  let sheep_list =
-                    [
-                      #(c, new_r),
-                      ..list.filter(state.sheep, fn(sh) {
-                        let #(sc, sr) = sh
-                        !{ sr == r && sc == c }
-                      })
-                    ]
-                    |> list.sort(fn(a, b) { int.compare(a.0, b.0) })
+                  let sheep_list = [
+                    #(new_r, c),
+                    ..list.filter(state.sheep, fn(sh) {
+                      let #(sr, sc) = sh
+                      !{ sr == r && sc == c }
+                    })
+                  ]
                   let new_state =
                     State(sheep_list, state.dragon_pos, turn: Dragon)
                   let #(sub_cnt, new_cache) =
@@ -382,6 +439,19 @@ pub const sample_input_5 = "..S..
 .....
 ..D.."
 
+pub const sample_input_6 = ".SS.S
+#...#
+...#.
+##..#
+.####
+##D.#"
+
+pub const sample_input_7 = "SSS.S
+.....
+#.#.#
+.#.#.
+#.D.#"
+
 pub const q10_input_1 = ".SSSSS.SSSSSS.SS.S.SS
 S.SS.SSSS.SSS.SS.S.SS
 .SSSS.S.SSSSSSSSS....
@@ -505,3 +575,10 @@ SS..SS#....S...S##.S..#.#.#.##S..SS.#S#...S#SSS#.##..#.##S.#S#SS.#S.#SS.S.....SS
 .S#.S.SSS#.#..#SS.SS#..####.......#S...#.#..#..#SS.#...#..SS..SSS..#.SSS...##..SS##.SSSS..S....S..S..
 .SS#...#.#S.....S...SS...#.#S#S...S.S.SS..S#...S#S.SS.#.S.SS#S.SSS.#.#S..S.S###......S.#.....S#...S..
 S..S..SS.SS.##.#..S.SSS#.#S.##S.##S.#.##...S...SS#.....#..S#.S.#.#S#S.##S.S...S..S###S....#SS.....S#S"
+
+pub const q10_input_3 = "..SSSSS
+.......
+..#..#.
+##.#.#.
+###.###
+###D###"
