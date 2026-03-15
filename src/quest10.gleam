@@ -1,4 +1,5 @@
 import gleam/dict
+import gleam/int
 import gleam/list
 import gleam/result
 import gleam/set
@@ -172,13 +173,26 @@ pub type Turn {
 }
 
 pub type State {
-  State(sheep: set.Set(#(Int, Int)), dragon_pos: #(Int, Int), turn: Turn)
+  State(sheep: List(#(Int, Int)), dragon_pos: #(Int, Int), turn: Turn)
+}
+
+fn sheep_set_to_state(sheep_set: set.Set(#(Int, Int))) {
+  set.fold(sheep_set, [], fn(acc, sh) {
+    let #(r, c) = sh
+    [#(c, r), ..acc]
+  })
+  |> list.sort(fn(el1, el2) {
+    let #(c1, _) = el1
+    let #(c2, _) = el2
+    int.compare(c1, c2)
+  })
 }
 
 pub fn q10p3(inp: String) {
   let #(sheep, dr, dc, hiding_spots, width, height) = parse_input(inp)
   let board = Board(width, height, hiding_spots)
-  let state = State(sheep: sheep, dragon_pos: #(dr, dc), turn: Sheep)
+  let sheep_state = sheep_set_to_state(sheep) |> echo
+  let state = State(sheep: sheep_state, dragon_pos: #(dr, dc), turn: Sheep)
   let #(cnt, _cache) = do_p3_round(state, board, dict.new())
   cnt
 }
@@ -192,7 +206,7 @@ fn do_sheep_round_p3(
     Ok(cnt) -> #(cnt, cache)
     Error(_) -> {
       let #(count, sheep_could_move, new_cache) =
-        set.fold(state.sheep, #(0, False, cache), fn(acc, sh) {
+        list.fold(state.sheep, #(0, False, cache), fn(acc, sh) {
           let #(cnt, _sheep_could_move, inn_cache) = acc
           let #(r, c) = sh
           let new_r = r + 1
@@ -210,15 +224,19 @@ fn do_sheep_round_p3(
                   #(cnt, True, inn_cache)
                 False -> {
                   // Sheep was able to move
-                  let sheep_set =
-                    state.sheep
-                    |> set.delete(#(r, c))
-                    |> set.insert(#(new_r, c))
+                  let sheep_list =
+                    [
+                      #(c, new_r),
+                      ..list.filter(state.sheep, fn(sh) {
+                        let #(sc, sr) = sh
+                        !{ sr == r && sc == c }
+                      })
+                    ]
+                    |> list.sort(fn(a, b) { int.compare(a.0, b.0) })
                   let new_state =
-                    State(sheep_set, state.dragon_pos, turn: Dragon)
+                    State(sheep_list, state.dragon_pos, turn: Dragon)
                   let #(sub_cnt, new_cache) =
-                    do_p3_round(new_state, board, cache)
-                  let new_cache = dict.insert(new_cache, state, sub_cnt)
+                    do_p3_round(new_state, board, inn_cache)
                   #(cnt + sub_cnt, True, new_cache)
                 }
               }
@@ -230,7 +248,6 @@ fn do_sheep_round_p3(
           // If the sheep could not move we skip it and recurse further
           let new_state = State(state.sheep, state.dragon_pos, turn: Dragon)
           let #(sub_count, new_cache) = do_p3_round(new_state, board, new_cache)
-          let new_cache = dict.insert(new_cache, new_state, count + sub_count)
           #(count + sub_count, new_cache)
         }
       }
@@ -260,25 +277,26 @@ fn do_dragon_round_p3(
       let #(count, new_cache) =
         list.fold(neighbours, #(0, cache), fn(acc, neighbour) {
           case
-            set.contains(state.sheep, neighbour)
+            list.any(state.sheep, fn(sh) { neighbour == sh })
             && !set.contains(board.hiding_spots, neighbour)
           {
             True -> {
               // We found a sheep. Eat it
-              let sheep_set = set.delete(state.sheep, neighbour)
-              case set.is_empty(sheep_set) {
+              let sheep_list =
+                list.filter(state.sheep, fn(sh) { neighbour != sh })
+              case list.is_empty(sheep_list) {
                 True ->
                   // Last sheep is eaten, add 1 to the count
                   #(acc.0 + 1, acc.1)
                 False -> {
                   // There are sheep left so we recurse
-                  let curr_state = State(sheep_set, neighbour, Sheep)
+                  let curr_state = State(sheep_list, neighbour, Sheep)
 
                   let #(sub_cnt, new_cache) =
-                    do_p3_round(curr_state, board, cache)
-                  let #(cnt, cache) = acc
+                    do_p3_round(curr_state, board, acc.1)
+                  let #(cnt, _cache) = acc
 
-                  #(cnt + sub_cnt, dict.insert(cache, curr_state, sub_cnt))
+                  #(cnt + sub_cnt, new_cache)
                 }
               }
             }
@@ -303,12 +321,18 @@ fn do_p3_round(
   board: Board,
   cache: dict.Dict(State, Int),
 ) -> #(Int, dict.Dict(State, Int)) {
-  case state.turn {
-    Sheep -> {
-      do_sheep_round_p3(state, board, cache)
-    }
-    Dragon -> {
-      do_dragon_round_p3(state, board, cache)
+  case dict.get(cache, state) {
+    Ok(cnt) -> #(cnt, cache)
+    Error(_) -> {
+      let #(count, next_cache) = case state.turn {
+        Sheep -> {
+          do_sheep_round_p3(state, board, cache)
+        }
+        Dragon -> {
+          do_dragon_round_p3(state, board, cache)
+        }
+      }
+      #(count, dict.insert(next_cache, state, count))
     }
   }
 }
@@ -351,6 +375,12 @@ pub const sample_input_4 = "SSS
 ..#
 .##
 .D#"
+
+pub const sample_input_5 = "..S..
+.....
+..#..
+.....
+..D.."
 
 pub const q10_input_1 = ".SSSSS.SSSSSS.SS.S.SS
 S.SS.SSSS.SSS.SS.S.SS
