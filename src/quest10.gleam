@@ -181,6 +181,31 @@ pub type State {
   State(sheep: List(#(Int, Int)), dragon_pos: #(Int, Int), turn: Turn)
 }
 
+pub fn int_pow(base: Int, exp: Int) -> Int {
+  case exp {
+    0 -> 1
+    e if e < 0 -> 0
+    // Or handle as error
+    _ -> base * int_pow(base, exp - 1)
+  }
+}
+
+fn state_to_key(state: State) {
+  let sheep_key =
+    list.fold(state.sheep, "", fn(acc, sh) {
+      let #(r, c) = sh
+      let key = int.to_string(r) <> "," <> int.to_string(c) <> ";"
+      acc <> key
+    })
+  let #(dr, dc) = state.dragon_pos
+  let dragon_pos_key = int.to_string(dr) <> "," <> int.to_string(dc)
+  let turn_key = case state.turn {
+    Sheep -> "S"
+    Dragon -> "D"
+  }
+  sheep_key <> dragon_pos_key <> turn_key
+}
+
 fn sheep_set_to_state(sheep_set: set.Set(#(Int, Int))) {
   set.fold(sheep_set, [], fn(acc, sh) {
     let #(r, c) = sh
@@ -256,9 +281,9 @@ pub fn q10p3(inp: String) {
 fn do_sheep_round_p3(
   state: State,
   board: Board,
-  cache: dict.Dict(State, Int),
-) -> #(Int, dict.Dict(State, Int)) {
-  case dict.get(cache, state) {
+  cache: dict.Dict(String, Int),
+) -> #(Int, dict.Dict(String, Int)) {
+  case dict.get(cache, state_to_key(state)) {
     Ok(cnt) -> #(cnt, cache)
     Error(_) -> {
       let #(count, sheep_could_move, new_cache) =
@@ -315,9 +340,9 @@ fn do_sheep_round_p3(
 fn do_dragon_round_p3(
   state: State,
   board: Board,
-  cache: dict.Dict(State, Int),
-) -> #(Int, dict.Dict(State, Int)) {
-  case dict.get(cache, state) {
+  cache: dict.Dict(String, Int),
+) -> #(Int, dict.Dict(String, Int)) {
+  case dict.get(cache, state_to_key(state)) {
     Ok(cnt) -> #(cnt, cache)
     Error(_) -> {
       let #(dragon_row, dragon_col) = state.dragon_pos
@@ -376,9 +401,9 @@ fn do_dragon_round_p3(
 fn do_p3_round(
   state: State,
   board: Board,
-  cache: dict.Dict(State, Int),
-) -> #(Int, dict.Dict(State, Int)) {
-  case dict.get(cache, state) {
+  cache: dict.Dict(String, Int),
+) -> #(Int, dict.Dict(String, Int)) {
+  case dict.get(cache, state_to_key(state)) {
     Ok(cnt) -> #(cnt, cache)
     Error(_) -> {
       let #(count, next_cache) = case state.turn {
@@ -389,7 +414,7 @@ fn do_p3_round(
           do_dragon_round_p3(state, board, cache)
         }
       }
-      #(count, dict.insert(next_cache, state, count))
+      #(count, dict.insert(next_cache, state_to_key(state), count))
     }
   }
 }
