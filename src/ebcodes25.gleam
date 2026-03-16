@@ -121,6 +121,18 @@ pub fn q10() -> Nil {
   Nil
 }
 
+import quest11
+
+pub fn q11() -> Nil {
+  io.print("Q11p1: ")
+  io.println(quest11.q11p1(quest11.q11_input_1) |> int.to_string)
+  // io.print("Q10p2: ")
+  // io.println(quest10.q10p2(quest10.q10_input_2, 20) |> int.to_string)
+  // io.print("Q10p3: ")
+  // io.println(quest10.q10p3(quest10.q10_input_3) |> int.to_string())
+  Nil
+}
+
 pub fn main() -> Nil {
   q10()
   Nil

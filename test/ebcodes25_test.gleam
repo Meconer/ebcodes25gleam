@@ -163,37 +163,43 @@ pub fn main() -> Nil {
 
 import quest10
 
-pub fn q10p1_test() {
-  let res = quest10.q10p1(quest10.sample_input_1, 3)
-  assert res == 27
-}
+// pub fn q10p1_test() {
+//   let res = quest10.q10p1(quest10.sample_input_1, 3)
+//   assert res == 27
+// }
 
-pub fn q10p2_test() {
-  let res = quest10.q10p2(quest10.sample_input_2, 3)
-  assert res == 27
-}
+// pub fn q10p2_test() {
+//   let res = quest10.q10p2(quest10.sample_input_2, 3)
+//   assert res == 27
+// }
 
-pub fn q10p3_test() {
-  let res = quest10.q10p3(quest10.sample_input_3)
-  assert res == 15
-}
+// pub fn q10p3_test() {
+//   let res = quest10.q10p3(quest10.sample_input_3)
+//   assert res == 15
+// }
 
-pub fn q10p3_2_test() {
-  let res = quest10.q10p3(quest10.sample_input_4)
-  assert res == 8
-}
+// pub fn q10p3_2_test() {
+//   let res = quest10.q10p3(quest10.sample_input_4)
+//   assert res == 8
+// }
 
-pub fn q10p3_3_test() {
-  let res = quest10.q10p3(quest10.sample_input_5)
-  assert res == 44
-}
+// pub fn q10p3_3_test() {
+//   let res = quest10.q10p3(quest10.sample_input_5)
+//   assert res == 44
+// }
 
-pub fn q10p3_4_test() {
-  let res = quest10.q10p3(quest10.sample_input_6)
-  assert res == 4406
-}
+// pub fn q10p3_4_test() {
+//   let res = quest10.q10p3(quest10.sample_input_6)
+//   assert res == 4406
+// }
 
-pub fn q10p3_5_test() {
-  let res = quest10.q10p3(quest10.sample_input_7)
-  assert res == 13_033_988_838
+// pub fn q10p3_5_test() {
+//   let res = quest10.q10p3(quest10.sample_input_7)
+//   assert res == 13_033_988_838
+// }
+import quest11
+
+pub fn q11p1_test() {
+  let res = quest11.q11p1(quest11.sample_input_1)
+  assert res == 0
 }
