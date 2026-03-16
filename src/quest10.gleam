@@ -190,6 +190,32 @@ pub fn int_pow(base: Int, exp: Int) -> Int {
   }
 }
 
+fn pack_state(state: State) -> Int {
+  let turn_bit = case state.turn {
+    Sheep -> 0
+    Dragon -> 1
+  }
+
+  // Bits 1-6: Dragon Position (Row * Width + Col)
+  let dragon_idx = state.dragon_pos.0 * 7 + state.dragon_pos.1
+  let acc = int.bitwise_or(turn_bit, int.bitwise_shift_left(dragon_idx, 1))
+
+  // Bits 7-27: Sheep positions
+  // Initialize all 7 sheep slots to '7' (binary 111, meaning empty)
+  let empty_sheep_bits = 0b111_111_111_111_111_111_111
+  let acc = int.bitwise_or(acc, int.bitwise_shift_left(empty_sheep_bits, 7))
+
+  // Overwrite slots where sheep actually exist
+  list.fold(state.sheep, acc, fn(current_acc, sh) {
+    let #(r, c) = sh
+    let offset = 7 + { c * 3 }
+    // Clear the 3 bits at this offset first, then put the row value in
+    let mask = int.bitwise_not(int.bitwise_shift_left(0b111, offset))
+    let cleared = int.bitwise_and(current_acc, mask)
+    int.bitwise_or(cleared, int.bitwise_shift_left(r, offset))
+  })
+}
+
 fn state_to_key(state: State) {
   let sheep_key =
     list.fold(state.sheep, "", fn(acc, sh) {
@@ -281,9 +307,9 @@ pub fn q10p3(inp: String) {
 fn do_sheep_round_p3(
   state: State,
   board: Board,
-  cache: dict.Dict(String, Int),
-) -> #(Int, dict.Dict(String, Int)) {
-  case dict.get(cache, state_to_key(state)) {
+  cache: dict.Dict(Int, Int),
+) -> #(Int, dict.Dict(Int, Int)) {
+  case dict.get(cache, pack_state(state)) {
     Ok(cnt) -> #(cnt, cache)
     Error(_) -> {
       let #(count, sheep_could_move, new_cache) =
@@ -340,9 +366,9 @@ fn do_sheep_round_p3(
 fn do_dragon_round_p3(
   state: State,
   board: Board,
-  cache: dict.Dict(String, Int),
-) -> #(Int, dict.Dict(String, Int)) {
-  case dict.get(cache, state_to_key(state)) {
+  cache: dict.Dict(Int, Int),
+) -> #(Int, dict.Dict(Int, Int)) {
+  case dict.get(cache, pack_state(state)) {
     Ok(cnt) -> #(cnt, cache)
     Error(_) -> {
       let #(dragon_row, dragon_col) = state.dragon_pos
@@ -401,9 +427,9 @@ fn do_dragon_round_p3(
 fn do_p3_round(
   state: State,
   board: Board,
-  cache: dict.Dict(String, Int),
-) -> #(Int, dict.Dict(String, Int)) {
-  case dict.get(cache, state_to_key(state)) {
+  cache: dict.Dict(Int, Int),
+) -> #(Int, dict.Dict(Int, Int)) {
+  case dict.get(cache, pack_state(state)) {
     Ok(cnt) -> #(cnt, cache)
     Error(_) -> {
       let #(count, next_cache) = case state.turn {
@@ -414,7 +440,7 @@ fn do_p3_round(
           do_dragon_round_p3(state, board, cache)
         }
       }
-      #(count, dict.insert(next_cache, state_to_key(state), count))
+      #(count, dict.insert(next_cache, pack_state(state), count))
     }
   }
 }
