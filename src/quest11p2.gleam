@@ -8,37 +8,28 @@ pub fn quest(inp: String) {
     inp
     |> string.split("\n")
     |> list.map(fn(ds) { int.parse(ds) |> result.unwrap(0) })
-    |> echo
-  let #(balanced_ducks, _) = do_phases(ducks)
-  calc_checksum(balanced_ducks)
-}
-
-fn calc_checksum(balanced_ducks: List(Int)) -> Int {
-  list.index_fold(balanced_ducks, 0, fn(acc, el, idx) { { idx + 1 } * el + acc })
+  let #(_, count) = do_phases(ducks)
+  count
 }
 
 fn do_phases(ducks: List(Int)) {
-  let #(after_phase_1, no_of_rounds_left) = do_phase1(ducks, 9) |> echo
-  do_phase2(after_phase_1, no_of_rounds_left) |> echo
+  let #(after_phase_1, count) = do_phase1(ducks, 0)
+  do_phase2(after_phase_1, count)
 }
 
-fn do_phase1(ducks: List(Int), no_of_rounds: Int) {
+fn do_phase1(ducks: List(Int), round_count: Int) {
   let #(ducks, did_move) = move_ph_1(ducks, [], False)
-  case did_move, no_of_rounds {
-    True, no_of_rounds if no_of_rounds > 0 -> do_phase1(ducks, no_of_rounds - 1)
-    False, _ -> #(ducks, no_of_rounds)
-    True, 0 -> #(ducks, 0)
-    True, _ -> panic as "This can not be negative"
+  case did_move {
+    True -> do_phase1(ducks, round_count + 1)
+    False -> #(ducks, round_count)
   }
 }
 
-fn do_phase2(ducks: List(Int), no_of_rounds: Int) {
+fn do_phase2(ducks: List(Int), round_count: Int) {
   let #(ducks, did_move) = move_ph_2(ducks, [], False)
-  case did_move, no_of_rounds {
-    True, no_of_rounds if no_of_rounds > 0 -> do_phase2(ducks, no_of_rounds - 1)
-    True, 0 -> #(ducks, 0)
-    True, _ -> panic as "Negative in phase 2"
-    False, _ -> #(ducks, no_of_rounds)
+  case did_move {
+    True -> do_phase2(ducks, round_count + 1)
+    False -> #(ducks, round_count)
   }
 }
 
@@ -87,9 +78,75 @@ pub const sample_input_1 = "9
 9
 6"
 
-pub const q11_input_1 = "1
-11
-17
-18
-19
-12"
+pub const sample_input_2 = "805
+706
+179
+48
+158
+150
+232
+885
+598
+524
+423"
+
+pub const input = "837018
+339175
+779209
+715610
+911938
+526803
+216740
+849541
+170706
+178971
+3852
+916913
+8111
+2097
+2224
+385325
+102395
+725
+993711
+608384
+593208
+482085
+1025
+784311
+2271
+572804
+656937
+336366
+806337
+644055
+903432
+668816
+788023
+61577
+996453
+3518
+675091
+612174
+866660
+209939
+289939
+590436
+567983
+679470
+483957
+602897
+7298
+153200
+5319
+954932
+703397
+441038
+93386
+81547
+677956
+420971
+924328
+847838
+841628
+455790"

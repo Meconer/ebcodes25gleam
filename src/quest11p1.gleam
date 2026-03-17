@@ -8,7 +8,6 @@ pub fn q11p1(inp: String) {
     inp
     |> string.split("\n")
     |> list.map(fn(ds) { int.parse(ds) |> result.unwrap(0) })
-    |> echo
   let #(balanced_ducks, _) = do_phases(ducks)
   calc_checksum(balanced_ducks)
 }
@@ -18,8 +17,8 @@ fn calc_checksum(balanced_ducks: List(Int)) -> Int {
 }
 
 fn do_phases(ducks: List(Int)) {
-  let #(after_phase_1, no_of_rounds_left) = do_phase1(ducks, 9) |> echo
-  do_phase2(after_phase_1, no_of_rounds_left) |> echo
+  let #(after_phase_1, no_of_rounds_left) = do_phase1(ducks, 9)
+  do_phase2(after_phase_1, no_of_rounds_left)
 }
 
 fn do_phase1(ducks: List(Int), no_of_rounds: Int) {
