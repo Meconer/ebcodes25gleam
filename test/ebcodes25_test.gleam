@@ -197,9 +197,15 @@ import quest10
 //   let res = quest10.q10p3(quest10.sample_input_7)
 //   assert res == 13_033_988_838
 // }
-import quest11
+import quest11p1
+import quest11p2
 
 pub fn q11p1_test() {
-  let res = quest11.q11p1(quest11.sample_input_1)
-  assert res == 0
+  let res = quest11p1.q11p1(quest11p1.sample_input_1)
+  assert res == 109
+}
+
+pub fn q11p2_test() {
+  let res = quest11p2.quest(quest11p2.sample_input_1)
+  assert res == 11
 }
