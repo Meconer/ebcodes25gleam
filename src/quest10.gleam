@@ -216,22 +216,6 @@ fn pack_state(state: State) -> Int {
   })
 }
 
-fn state_to_key(state: State) {
-  let sheep_key =
-    list.fold(state.sheep, "", fn(acc, sh) {
-      let #(r, c) = sh
-      let key = int.to_string(r) <> "," <> int.to_string(c) <> ";"
-      acc <> key
-    })
-  let #(dr, dc) = state.dragon_pos
-  let dragon_pos_key = int.to_string(dr) <> "," <> int.to_string(dc)
-  let turn_key = case state.turn {
-    Sheep -> "S"
-    Dragon -> "D"
-  }
-  sheep_key <> dragon_pos_key <> turn_key
-}
-
 fn sheep_set_to_state(sheep_set: set.Set(#(Int, Int))) {
   set.fold(sheep_set, [], fn(acc, sh) {
     let #(r, c) = sh

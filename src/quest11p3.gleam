@@ -1,3 +1,4 @@
+import gleam/bool
 import gleam/int
 import gleam/list
 import gleam/result
@@ -8,16 +9,34 @@ pub fn quest(inp: String) {
     inp
     |> string.split("\n")
     |> list.map(fn(ds) { int.parse(ds) |> result.unwrap(0) })
-  list.window(ducks, 2)
-  |> list.all(fn(lst) {
-    case lst {
-      [a, b] if a > b -> False
-      [a, b] if a <= b -> True
-      _ -> panic as "only pair"
-    }
-  })
-  |> echo
-  0
+
+  // Check that the values are strictly increasing
+  let increase_check =
+    list.window(ducks, 2)
+    |> list.all(fn(lst) {
+      case lst {
+        [a, b] if a > b -> False
+        [a, b] if a <= b -> True
+        _ -> panic as "only pair"
+      }
+    })
+  use <- bool.guard(!increase_check, -1)
+
+  // Check that we can reach a perfect balance
+  let sum = list.fold(ducks, 0, fn(acc, col) { acc + col })
+  let len = list.length(ducks)
+  let avg = sum / len
+  let total = avg * len
+  use <- bool.guard(sum != total, -1)
+  let no_of_rounds =
+    list.fold(ducks, 0, fn(acc, col) {
+      let diff = avg - col
+      case diff > 0 {
+        True -> acc + diff
+        False -> acc
+      }
+    })
+  no_of_rounds
 }
 
 pub const input_p3 = "10791717647

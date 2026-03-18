@@ -220,5 +220,5 @@ import quest11p3
 
 pub fn q11p3_test() {
   let res = quest11p3.quest(quest11p3.input_p3)
-  assert res == 0
+  assert res == 138_131_852_441_455
 }

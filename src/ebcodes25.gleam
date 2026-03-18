@@ -4,6 +4,7 @@ import gleam/list
 import gleam/string
 import q5_inputs
 import quest11p2
+import quest11p3
 import quest6
 import quest7
 import quest8
@@ -129,8 +130,8 @@ pub fn q11() -> Nil {
   io.println(quest11p1.q11p1(quest11p1.q11_input_1) |> int.to_string)
   io.print("Q11p2: ")
   io.println(quest11p2.quest(quest11p2.input) |> int.to_string)
-  // io.print("Q10p3: ")
-  // io.println(quest10.q10p3(quest10.q10_input_3) |> int.to_string())
+  io.print("Q11p3: ")
+  io.println(quest11p3.quest(quest11p3.input_p3) |> int.to_string())
   Nil
 }
 
