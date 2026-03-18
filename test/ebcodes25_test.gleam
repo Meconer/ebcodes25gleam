@@ -197,28 +197,35 @@ import quest10
 //   let res = quest10.q10p3(quest10.sample_input_7)
 //   assert res == 13_033_988_838
 // }
-import quest11p1
+// import quest11p1
 
-pub fn q11p1_test() {
-  let res = quest11p1.q11p1(quest11p1.sample_input_1)
-  assert res == 109
-}
+// pub fn q11p1_test() {
+//   let res = quest11p1.q11p1(quest11p1.sample_input_1)
+//   assert res == 109
+// }
 
-import quest11p2
+// import quest11p2
 
-pub fn q11p2_test() {
-  let res = quest11p2.quest(quest11p2.sample_input_1)
-  assert res == 11
-}
+// pub fn q11p2_test() {
+//   let res = quest11p2.quest(quest11p2.sample_input_1)
+//   assert res == 11
+// }
 
-pub fn q11p2_2_test() {
-  let res = quest11p2.quest(quest11p2.sample_input_2)
-  assert res == 1579
-}
+// pub fn q11p2_2_test() {
+//   let res = quest11p2.quest(quest11p2.sample_input_2)
+//   assert res == 1579
+// }
 
-import quest11p3
+// import quest11p3
 
-pub fn q11p3_test() {
-  let res = quest11p3.quest(quest11p3.input_p3)
-  assert res == 138_131_852_441_455
+// pub fn q11p3_test() {
+//   let res = quest11p3.quest(quest11p3.input_p3)
+//   assert res == 138_131_852_441_455
+// }
+
+import quest12
+
+pub fn q12p1_test() {
+  let res = quest12.part1(quest12.sample_input_1)
+  assert res == 16
 }
