@@ -2,6 +2,10 @@ import gleam/dict
 import gleam/int
 import gleam/list
 
+pub type Pos {
+  Pos(r: Int, c: Int)
+}
+
 pub type Board(a) {
   Board(width: Int, height: Int, board_el: dict.Dict(#(Int, Int), a))
 }
@@ -15,6 +19,10 @@ pub fn create_board(elements: List(List(a))) {
     })
     |> list.flatten()
   Board(width, height, dict.from_list(rows))
+}
+
+pub fn get_neighbours_4(board: Board(a), pos: Pos) {
+  todo
 }
 
 pub fn unsafe_list_first(lst: List(a)) -> a {
