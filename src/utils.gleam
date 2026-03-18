@@ -1,5 +1,21 @@
+import gleam/dict
 import gleam/int
 import gleam/list
+
+pub type Board(a) {
+  Board(width: Int, height: Int, board_el: dict.Dict(#(Int, Int), a))
+}
+
+pub fn create_board(elements: List(List(a))) {
+  let width = unsafe_list_first(elements) |> list.length()
+  let height = list.length(elements)
+  let rows =
+    list.index_map(elements, fn(row, row_idx) {
+      list.index_map(row, fn(el, col_idx) { #(#(row_idx, col_idx), el) })
+    })
+    |> list.flatten()
+  Board(width, height, dict.from_list(rows))
+}
 
 pub fn unsafe_list_first(lst: List(a)) -> a {
   case lst {

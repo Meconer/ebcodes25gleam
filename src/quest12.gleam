@@ -3,22 +3,17 @@ import gleam/int
 import gleam/list
 import gleam/result
 import gleam/string
+import utils
 
 pub fn part1(inp: String) {
   let piles =
     inp
     |> string.split("\n")
-    |> list.index_map(fn(line, row_idx) {
-      #(
-        row_idx,
-        string.to_graphemes(line)
-          |> list.index_map(fn(g, idx) {
-            #(idx, int.parse(g) |> result.unwrap(-1))
-          })
-          |> dict.from_list(),
-      )
+    |> list.map(fn(line) {
+      string.to_graphemes(line)
+      |> list.map(fn(g) { int.parse(g) |> result.unwrap(-1) })
     })
-    |> dict.from_list()
+    |> utils.create_board()
     |> echo
 
   0
