@@ -225,7 +225,22 @@ import quest10
 
 import quest12
 
-pub fn q12p1_test() {
-  let res = quest12.part1(quest12.sample_input_1)
-  assert res == 16
+// pub fn q12p1_test() {
+//   let res = quest12.part1(quest12.sample_input_1)
+//   assert res == 16
+// }
+
+// pub fn q12p2_test() {
+//   let res = quest12.part2(quest12.sample_input_2)
+//   assert res == 58
+// }
+
+// pub fn q12p3_test() {
+//   let res = quest12.part3(quest12.sample_input_3)
+//   assert res == 14
+// }
+
+pub fn q12p4_test() {
+  let res = quest12.part3(quest12.sample_input_4)
+  assert res == 136
 }

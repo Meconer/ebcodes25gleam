@@ -5,6 +5,7 @@ import gleam/string
 import q5_inputs
 import quest11p2
 import quest11p3
+import quest12
 import quest6
 import quest7
 import quest8
@@ -135,7 +136,17 @@ pub fn q11() -> Nil {
   Nil
 }
 
+pub fn q12() -> Nil {
+  io.print("Q12p1: ")
+  io.println(quest12.part1(quest12.input_p1) |> int.to_string)
+  io.print("Q12p2: ")
+  io.println(quest12.part2(quest12.input_p2) |> int.to_string)
+  // io.print("Q11p3: ")
+  // io.println(quest11p3.quest(quest11p3.input_p3) |> int.to_string())
+  Nil
+}
+
 pub fn main() -> Nil {
-  q11()
+  q12()
   Nil
 }
